@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 Hello dnv,
+=======
+Hello dnv, aoba, aoba2
+>>>>>>> 6e30cc7c7cfbba40398e30c55ab3770cdd664101
 adasdadakadjdhs
 
 wqiefqwefoiqwjdoiqjw
