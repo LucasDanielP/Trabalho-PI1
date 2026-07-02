@@ -1,4 +1,5 @@
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -13,6 +14,9 @@ export default function Home() {
           <Button variant={"ghost"}>
             <p>Começar sem conta</p>
           </Button>
+          <Link href="/logs" className={buttonVariants({ variant: "outline" })}>
+            Ver Histórico (Logs)
+          </Link>
         </div>
 
 
