@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { mockSessoesEstudo, mockConfiguracoes } from "@/lib/mocks";
-import { Clock, Calendar, CheckCircle2, Timer } from "lucide-react";
+import Link from "next/link";
+import { Sidebar } from "lucide-react";
 
 export default function LogsPage() {
-  // Evita erro de hidratação (hydration mismatch) com datas do lado do servidor vs cliente
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -13,82 +13,109 @@ export default function LogsPage() {
   }, []);
 
   if (!isMounted) {
-    return (
-      <main className="max-w-4xl mx-auto p-6 md:p-10 animate-pulse">
-        <div className="h-10 w-48 bg-slate-200 dark:bg-slate-800 rounded mb-4"></div>
-        <div className="h-4 w-64 bg-slate-200 dark:bg-slate-800 rounded mb-10"></div>
-        <div className="space-y-4">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="h-32 w-full bg-slate-200 dark:bg-slate-800 rounded-xl"></div>
-          ))}
-        </div>
-      </main>
-    );
+    return <div className="flex h-full w-full justify-center p-6" />;
   }
 
+  // Formatadores de data e hora
+  const formatTime = (date: Date) => date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  const formatMonth = (date: Date) => date.toLocaleDateString('pt-BR', { month: 'long' }).toUpperCase();
+  const formatDay = (date: Date) => date.toLocaleDateString('pt-BR', { day: '2-digit' });
+  const formatYear = (date: Date) => date.toLocaleDateString('pt-BR', { year: 'numeric' });
+
   return (
-    <main className="max-w-4xl mx-auto p-6 md:p-10">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight mb-2">Logs de Estudo</h1>
-        <p className="text-muted-foreground text-slate-500">Histórico das suas sessões de foco e produtividade.</p>
+    <div className="flex flex-col h-full w-full text-white font-sans">
+      
+      {/* Barra Superior (Idêntica à tela de Foco) */}
+      <div className="relative z-10 flex items-center justify-between mb-16">
+        
+        {/* Mantendo um placeholder ou ícone escondido para alinhar perfeitamente ao centro */}
+        <div className="w-6 invisible">
+          <Sidebar size={24} strokeWidth={2} />
+        </div>
+
+        {/* Abas Centrais */}
+        <div className="flex gap-4 absolute left-1/2 -translate-x-1/2">
+          <Link 
+            href="/timer" 
+            className="px-8 py-2 rounded-full text-sm font-semibold transition-colors bg-[#112031] text-gray-400 hover:text-white"
+          >
+            Foco
+          </Link>
+          <Link 
+            href="/dados" 
+            className="px-8 py-2 rounded-full text-sm font-semibold transition-colors bg-[#112031] text-gray-400 hover:text-white"
+          >
+            Dados
+          </Link>
+          <div className="px-8 py-2 rounded-full text-sm font-bold bg-[#04D939] text-[#012340]">
+            Logs
+          </div>
+        </div>
+
+        {/* Placeholder vazio para alinhar corretamente com space-between */}
+        <div className="w-6"></div>
       </div>
 
-      <div className="space-y-4">
+      <div className="w-full max-w-[950px] mx-auto flex flex-col gap-8 pb-10">
         {mockSessoesEstudo.map((sessao) => {
           const config = mockConfiguracoes.find((c) => c.id === sessao.configuracaoId);
           
+          // Tempo ativo e descanso simulados para o visual
+          const tempoAtivo = config ? config.duracaoFocoMin * sessao.ciclosCompletos : 0;
+          const tempoDescanso = config ? config.duracaoPausaCurtaMin * sessao.ciclosCompletos : 0;
+
           return (
             <div 
               key={sessao.id} 
-              className="flex flex-col md:flex-row bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-200"
+              className="flex flex-col lg:flex-row items-center justify-between gap-8 border border-[#04D939]/60 bg-transparent rounded-[1.25rem] p-6 lg:p-8 shadow-lg w-full"
             >
-              <div className="flex-1">
-                <div className="flex items-start gap-4">
-                  <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 p-3 rounded-lg mt-1">
-                    <Calendar className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-lg capitalize">
-                      {sessao.inicio.toLocaleDateString('pt-BR', { 
-                        weekday: 'long', 
-                        day: 'numeric', 
-                        month: 'long' 
-                      })}
-                    </h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1.5 mt-1 font-medium">
-                      <Clock className="w-4 h-4" />
-                      {sessao.inicio.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} 
-                      {sessao.fim ? ` até ${sessao.fim.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}` : " (Em andamento)"}
-                    </p>
-                  </div>
+              {/* Ciclos Concluídos (Esquerda) */}
+              <div className="flex flex-col items-center lg:items-start shrink-0">
+                <span className="text-[14px] font-bold text-white mb-3">Ciclos concluídos</span>
+                <div className="w-[110px] h-[110px] rounded-full border-[4px] border-[#04D939] flex items-center justify-center bg-[#012340]">
+                  <span className="text-[3rem] font-bold text-white leading-none">{sessao.ciclosCompletos}</span>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between mt-6 md:mt-0 md:pl-8 md:border-l border-slate-100 dark:border-slate-800 gap-8">
-                <div className="flex flex-col">
-                  <span className="text-xs text-slate-500 uppercase tracking-wider font-semibold flex items-center gap-1.5 mb-1">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                    Ciclos
-                  </span>
-                  <span className="text-3xl font-bold text-slate-900 dark:text-slate-100">
-                    {sessao.ciclosCompletos}
+              {/* Grid Central de Informações */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-1 w-full lg:min-w-[450px]">
+                {/* Começou */}
+                <div className="border border-[#04D939]/40 rounded-xl px-5 py-4 bg-[#04D939]/5 flex flex-col justify-center">
+                  <span className="text-[13px] sm:text-[14px] text-white font-medium mb-1">Começou:</span>
+                  <span className="text-2xl sm:text-[28px] font-medium leading-tight">{formatTime(sessao.inicio)}</span>
+                </div>
+                {/* Tempo Ativo */}
+                <div className="border border-[#04D939]/40 rounded-xl px-5 py-4 bg-[#04D939]/5 flex flex-col justify-center">
+                  <span className="text-[13px] sm:text-[14px] text-white font-medium mb-1">Tempo ativo:</span>
+                  <span className="text-2xl sm:text-[28px] font-medium leading-tight whitespace-nowrap">{tempoAtivo} min</span>
+                </div>
+                {/* Terminou */}
+                <div className="border border-[#04D939]/40 rounded-xl px-5 py-4 bg-[#04D939]/5 flex flex-col justify-center">
+                  <span className="text-[13px] sm:text-[14px] text-white font-medium mb-1">Terminou:</span>
+                  <span className="text-2xl sm:text-[28px] font-medium leading-tight">
+                    {sessao.fim ? formatTime(sessao.fim) : "--:--"}
                   </span>
                 </div>
-                
-                <div className="flex flex-col">
-                  <span className="text-xs text-slate-500 uppercase tracking-wider font-semibold flex items-center gap-1.5 mb-1">
-                    <Timer className="w-4 h-4 text-indigo-500" />
-                    Configuração
-                  </span>
-                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                    {config?.nome || "Desconhecida"}
-                  </span>
+                {/* Tempo Descanso */}
+                <div className="border border-[#04D939]/40 rounded-xl px-5 py-4 bg-[#04D939]/5 flex flex-col justify-center">
+                  <span className="text-[13px] sm:text-[14px] text-white font-medium mb-1">Tempo descanso:</span>
+                  <span className="text-2xl sm:text-[28px] font-medium leading-tight whitespace-nowrap">{tempoDescanso} min</span>
                 </div>
+              </div>
+
+              {/* Data (Direita) */}
+              <div className="flex flex-col items-center justify-center shrink-0 min-w-[120px]">
+                <span className="text-[52px] font-bold leading-none mb-2 tracking-tight">{formatDay(sessao.inicio)}</span>
+                <span className="text-[18px] font-normal tracking-[0.05em] leading-tight text-white mb-1">{formatMonth(sessao.inicio)}</span>
+                <span className="text-[18px] font-normal tracking-[0.05em] leading-tight text-white">{formatYear(sessao.inicio)}</span>
               </div>
             </div>
           );
         })}
       </div>
-    </main>
+    </div>
   );
 }
+
+
+

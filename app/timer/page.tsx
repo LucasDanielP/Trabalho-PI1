@@ -25,7 +25,7 @@ export default function Timer() {
             Dados
           </Link>
           <Link 
-            href="#" 
+            href="/logs" 
             className="px-8 py-2 rounded-full text-sm font-semibold transition-colors bg-[#112031] text-gray-400 hover:text-white"
           >
             Logs
