@@ -14,6 +14,8 @@ export const metadata: Metadata = {
   description: "Aplicação Pomodoro para gestão de tempo de estudo e foco.",
 };
 
+import FrameWrapper from "@/components/FrameWrapper";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -25,7 +27,11 @@ export default function RootLayout({
       className={`${montserrat.variable} h-full`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col antialiased">{children}</body>
+      <body className="min-h-full flex flex-col antialiased">
+        <FrameWrapper>
+          {children}
+        </FrameWrapper>
+      </body>
     </html>
   );
 }
