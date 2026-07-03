@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Mail, User } from "lucide-react";
+import { Lock, Mail, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,9 +33,24 @@ export function UsuarioForm({
   const router = useRouter();
   const [nome, setNome] = useState(defaultValues?.nome ?? "");
   const [email, setEmail] = useState(defaultValues?.email ?? "");
+  const [senha, setSenha] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isCadastro = variant === "cadastro";
+  const isCreate = mode === "create";
+
+  async function autenticarAposCadastro(emailValue: string, senhaValue: string) {
+    const loginResponse = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: emailValue, senha: senhaValue }),
+    });
+
+    if (!loginResponse.ok) {
+      const loginData = await loginResponse.json();
+      throw new Error(loginData.error ?? "Conta criada, mas não foi possível entrar");
+    }
+  }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -43,12 +58,16 @@ export function UsuarioForm({
     setIsSubmitting(true);
 
     try {
+      const body = isCreate
+        ? { nome, email, senha }
+        : { nome, email };
+
       const response = await fetch(
-        mode === "create" ? "/api/usuarios" : `/api/usuarios/${usuarioId}`,
+        isCreate ? "/api/usuarios" : `/api/usuarios/${usuarioId}`,
         {
-          method: mode === "create" ? "POST" : "PATCH",
+          method: isCreate ? "POST" : "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ nome, email }),
+          body: JSON.stringify(body),
         },
       );
 
@@ -59,6 +78,10 @@ export function UsuarioForm({
         return;
       }
 
+      if (isCreate && isCadastro) {
+        await autenticarAposCadastro(email, senha);
+      }
+
       if (redirectTo) {
         router.push(redirectTo);
         router.refresh();
@@ -67,8 +90,12 @@ export function UsuarioForm({
 
       router.push(`/usuarios/${data.id}`);
       router.refresh();
-    } catch {
-      setError("Erro de conexão. Tente novamente.");
+    } catch (submitError) {
+      setError(
+        submitError instanceof Error
+          ? submitError.message
+          : "Erro de conexão. Tente novamente.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -119,6 +146,31 @@ export function UsuarioForm({
         </div>
       </div>
 
+      {isCreate ? (
+        <div className={cn("flex flex-col", isCadastro ? "gap-1.5" : "gap-2")}>
+          {!isCadastro ? <Label htmlFor="senha">Senha</Label> : null}
+          <div className="relative">
+            {isCadastro ? (
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                <Lock size={18} />
+              </div>
+            ) : null}
+            <Input
+              id="senha"
+              name="senha"
+              type="password"
+              value={senha}
+              onChange={(event) => setSenha(event.target.value)}
+              placeholder={isCadastro ? "Senha" : "Mínimo 6 caracteres"}
+              className={isCadastro ? cadastroInputClassName : undefined}
+              required
+              minLength={6}
+              maxLength={72}
+            />
+          </div>
+        </div>
+      ) : null}
+
       {error ? (
         <p
           className={cn(
@@ -146,7 +198,7 @@ export function UsuarioForm({
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting
             ? "Salvando..."
-            : mode === "create"
+            : isCreate
               ? "Criar conta"
               : "Salvar alterações"}
         </Button>
