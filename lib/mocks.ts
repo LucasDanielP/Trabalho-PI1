@@ -49,42 +49,42 @@ export const mockSessoesEstudo: SessaoEstudo[] = [
   {
     id: 'ses_1',
     usuarioId: 'usr_1',
-    inicio: new Date('2024-03-01T09:00:00Z'),
-    fim: new Date('2024-03-01T11:00:00Z'), // 2 horas (4 ciclos de 25m + pausas)
-    ciclosCompletos: 4,
+    inicio: new Date('2026-05-03T09:30:00'),
+    fim: new Date('2026-05-03T11:04:00'),
+    ciclosCompletos: 3,
     configuracaoId: 'cfg_classico',
     estado: {
       faseAtual: 'PAUSA_LONGA',
-      cicloAtual: 4,
-      tempoRestanteSeg: 900, // 15 minutos em segundos
+      cicloAtual: 3,
+      tempoRestanteSeg: 0,
       configuracaoId: 'cfg_classico',
     },
   },
   {
     id: 'ses_2',
     usuarioId: 'usr_1',
-    inicio: new Date('2024-03-02T14:00:00Z'),
-    fim: new Date('2024-03-02T15:00:00Z'), // 1 hora (1 ciclo de 50m + pausa)
-    ciclosCompletos: 1,
+    inicio: new Date('2026-05-02T14:10:00'),
+    fim: new Date('2026-05-02T18:45:00'),
+    ciclosCompletos: 17,
     configuracaoId: 'cfg_custom_1',
     estado: {
       faseAtual: 'PAUSA_CURTA',
-      cicloAtual: 1,
-      tempoRestanteSeg: 600, // 10 minutos em segundos
+      cicloAtual: 17,
+      tempoRestanteSeg: 0,
       configuracaoId: 'cfg_custom_1',
     },
   },
   {
     id: 'ses_3',
     usuarioId: 'usr_1',
-    inicio: new Date('2024-03-03T10:00:00Z'), // Data estática para evitar erro de hidratação (hydration mismatch)
-    fim: null, // Em andamento
-    ciclosCompletos: 0,
+    inicio: new Date('2026-05-01T08:00:00'),
+    fim: new Date('2026-05-01T10:20:00'),
+    ciclosCompletos: 8,
     configuracaoId: 'cfg_classico',
     estado: {
-      faseAtual: 'FOCO',
-      cicloAtual: 1,
-      tempoRestanteSeg: 1500, // 25 minutos em segundos
+      faseAtual: 'PAUSA_CURTA',
+      cicloAtual: 8,
+      tempoRestanteSeg: 0,
       configuracaoId: 'cfg_classico',
     },
   },
