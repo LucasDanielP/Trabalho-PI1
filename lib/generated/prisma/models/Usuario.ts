@@ -996,6 +996,7 @@ export type UsuarioCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * The data used to create many Usuarios.
    */
   data: Prisma.UsuarioCreateManyInput | Prisma.UsuarioCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1014,6 +1015,7 @@ export type UsuarioCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensi
    * The data used to create many Usuarios.
    */
   data: Prisma.UsuarioCreateManyInput | Prisma.UsuarioCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
