@@ -6,16 +6,6 @@ import Link from "next/link";
 import { Sidebar } from "lucide-react";
 
 export default function LogsPage() {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) {
-    return <div className="flex h-full w-full justify-center p-6" />;
-  }
-
   // Formatadores de data e hora
   const formatTime = (date: Date) => date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
   const formatMonth = (date: Date) => date.toLocaleDateString('pt-BR', { month: 'long' }).toUpperCase();
@@ -82,7 +72,7 @@ export default function LogsPage() {
                 {/* Começou */}
                 <div className="border border-[#04D939]/40 rounded-xl px-5 py-4 bg-[#04D939]/5 flex flex-col justify-center">
                   <span className="text-[13px] sm:text-[14px] text-white font-medium mb-1">Começou:</span>
-                  <span className="text-2xl sm:text-[28px] font-medium leading-tight">{formatTime(sessao.inicio)}</span>
+                  <span className="text-2xl sm:text-[28px] font-medium leading-tight" suppressHydrationWarning>{formatTime(sessao.inicio)}</span>
                 </div>
                 {/* Tempo Ativo */}
                 <div className="border border-[#04D939]/40 rounded-xl px-5 py-4 bg-[#04D939]/5 flex flex-col justify-center">
@@ -92,7 +82,7 @@ export default function LogsPage() {
                 {/* Terminou */}
                 <div className="border border-[#04D939]/40 rounded-xl px-5 py-4 bg-[#04D939]/5 flex flex-col justify-center">
                   <span className="text-[13px] sm:text-[14px] text-white font-medium mb-1">Terminou:</span>
-                  <span className="text-2xl sm:text-[28px] font-medium leading-tight">
+                  <span className="text-2xl sm:text-[28px] font-medium leading-tight" suppressHydrationWarning>
                     {sessao.fim ? formatTime(sessao.fim) : "--:--"}
                   </span>
                 </div>
@@ -105,9 +95,9 @@ export default function LogsPage() {
 
               {/* Data (Direita) */}
               <div className="flex flex-col items-center justify-center shrink-0 min-w-[120px]">
-                <span className="text-[52px] font-bold leading-none mb-2 tracking-tight">{formatDay(sessao.inicio)}</span>
-                <span className="text-[18px] font-normal tracking-[0.05em] leading-tight text-white mb-1">{formatMonth(sessao.inicio)}</span>
-                <span className="text-[18px] font-normal tracking-[0.05em] leading-tight text-white">{formatYear(sessao.inicio)}</span>
+                <span className="text-[52px] font-bold leading-none mb-2 tracking-tight" suppressHydrationWarning>{formatDay(sessao.inicio)}</span>
+                <span className="text-[18px] font-normal tracking-[0.05em] leading-tight text-white mb-1" suppressHydrationWarning>{formatMonth(sessao.inicio)}</span>
+                <span className="text-[18px] font-normal tracking-[0.05em] leading-tight text-white" suppressHydrationWarning>{formatYear(sessao.inicio)}</span>
               </div>
             </div>
           );
