@@ -1,6 +1,5 @@
 import Link from "next/link";
 
-import { AppShell } from "@/components/layout/app-shell";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { listUsuarios } from "@/lib/services/usuario.service";
@@ -18,12 +17,16 @@ export default async function UsuariosPage() {
   const usuarios = await listUsuarios();
 
   return (
-    <AppShell showNav={false} contentClassName="mx-auto max-w-3xl">
+    <div className="mx-auto w-full max-w-3xl">
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <div className="space-y-1">
-          <p className="ds-label text-primary">Contas</p>
-          <h1 className="text-3xl font-bold tracking-tight">Usuários</h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#04D939]">
+            Contas
+          </p>
+          <h1 className="text-3xl font-bold tracking-tight text-white">
+            Usuários
+          </h1>
+          <p className="text-sm text-[#8fa8c4]">
             Gerencie as contas cadastradas no sistema.
           </p>
         </div>
@@ -34,10 +37,8 @@ export default async function UsuariosPage() {
       </div>
 
       {usuarios.length === 0 ? (
-        <div className="ds-card border-dashed p-8 text-center">
-          <p className="text-muted-foreground">
-            Nenhum usuário cadastrado ainda.
-          </p>
+        <div className="rounded-2xl border border-dashed border-white/10 bg-[#0d1826]/80 p-8 text-center">
+          <p className="text-[#8fa8c4]">Nenhum usuário cadastrado ainda.</p>
           <Link
             href="/cadastro"
             className={cn(buttonVariants(), "mt-4 inline-flex")}
@@ -50,12 +51,12 @@ export default async function UsuariosPage() {
           {usuarios.map((usuario) => (
             <li
               key={usuario.id}
-              className="ds-card flex flex-wrap items-center justify-between gap-4 p-5"
+              className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white/5 bg-[#0d1826]/80 p-5"
             >
               <div>
-                <p className="font-semibold text-foreground">{usuario.nome}</p>
-                <p className="text-sm text-muted-foreground">{usuario.email}</p>
-                <p className="mt-1 text-xs text-muted-foreground">
+                <p className="font-semibold text-white">{usuario.nome}</p>
+                <p className="text-sm text-[#8fa8c4]">{usuario.email}</p>
+                <p className="mt-1 text-xs text-[#8fa8c4]">
                   Criado em {formatDate(usuario.criadoEm)}
                 </p>
               </div>
@@ -79,6 +80,6 @@ export default async function UsuariosPage() {
           Voltar para o início
         </Link>
       </div>
-    </AppShell>
+    </div>
   );
 }

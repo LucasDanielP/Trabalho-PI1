@@ -1,15 +1,15 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { ReactNode } from "react";
+import { CSSProperties, ReactNode } from "react";
 
 export default function FrameWrapper({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   // Definindo estilos padrão (Home /)
-  let glow1Style = { top: '-20%', left: '-10%', width: '300px', height: '300px', opacity: 0.20 };
-  let glow2Style = { top: '70%', left: '70%', width: '250px', height: '250px', opacity: 0.18 };
-  let glow3Style = { top: '50%', left: '50%', width: '0px', height: '0px', opacity: 0 }; // Hidden by default
+  let glow1Style: CSSProperties = { top: '-20%', left: '-10%', width: '300px', height: '300px', opacity: 0.20 };
+  let glow2Style: CSSProperties = { top: '70%', left: '70%', width: '250px', height: '250px', opacity: 0.18 };
+  let glow3Style: CSSProperties = { top: '50%', left: '50%', width: '0px', height: '0px', opacity: 0 };
   let frameMaxWidth = 'max-w-md';
 
   if (pathname === '/cadastro') {
@@ -28,6 +28,11 @@ export default function FrameWrapper({ children }: { children: ReactNode }) {
     glow2Style = { top: '80%', left: '75%', width: '300px', height: '300px', opacity: 0.08, transform: 'translate(-50%, -50%)' };
     glow3Style = { top: '60%', left: '30%', width: '250px', height: '250px', opacity: 0.07, transform: 'translate(-50%, -50%)' };
     frameMaxWidth = 'max-w-4xl min-h-[500px] justify-between'; // Ampliado para max-w-4xl a pedido do usuário
+  } else if (pathname.startsWith('/usuarios')) {
+    glow1Style = { top: '-20%', left: '60%', width: '300px', height: '300px', opacity: 0.20 };
+    glow2Style = { top: '70%', left: '-10%', width: '250px', height: '250px', opacity: 0.18 };
+    glow3Style = { top: '50%', left: '50%', width: '0px', height: '0px', opacity: 0 };
+    frameMaxWidth = 'max-w-3xl';
   }
 
   return (
