@@ -28,7 +28,7 @@ export default async function UsuariosPage() {
           </p>
         </div>
 
-        <Link href="/sign" className={cn(buttonVariants())}>
+        <Link href="/cadastro" className={cn(buttonVariants())}>
           Novo usuário
         </Link>
       </div>
@@ -39,7 +39,7 @@ export default async function UsuariosPage() {
             Nenhum usuário cadastrado ainda.
           </p>
           <Link
-            href="/sign"
+            href="/cadastro"
             className={cn(buttonVariants(), "mt-4 inline-flex")}
           >
             Criar primeira conta

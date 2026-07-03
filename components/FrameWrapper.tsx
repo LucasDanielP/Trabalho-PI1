@@ -22,7 +22,7 @@ export default function FrameWrapper({ children }: { children: ReactNode }) {
     glow2Style = { top: '30%', left: '20%', width: '250px', height: '250px', opacity: 0.16 };
     glow3Style = { top: '50%', left: '50%', width: '0px', height: '0px', opacity: 0 };
     frameMaxWidth = 'max-w-md';
-  } else if (pathname === '/timer') {
+  } else if (pathname === '/timer' || pathname === '/logs' || pathname === '/dados') {
     // Menores, espalhadas e não centralizadas (uma na esquerda alta, uma na direita baixa, uma no centro inferior)
     glow1Style = { top: '20%', left: '20%', width: '350px', height: '350px', opacity: 0.10, transform: 'translate(-50%, -50%)' };
     glow2Style = { top: '80%', left: '75%', width: '300px', height: '300px', opacity: 0.08, transform: 'translate(-50%, -50%)' };
