@@ -136,13 +136,15 @@ export default function Timer() {
   const resetTimer = () => {
     setIsActive(false);
     
-    let tempoOriginal = configAtiva.duracaoFocoMin * 60;
-    if (fase === "PAUSA_CURTA") tempoOriginal = configAtiva.duracaoPausaCurtaMin * 60;
-    if (fase === "PAUSA_LONGA") tempoOriginal = configAtiva.duracaoPausaLongaMin * 60;
+    let tempoOriginal = customTempoTotal;
+    if (!tempoOriginal) {
+      tempoOriginal = configAtiva.duracaoFocoMin * 60;
+      if (fase === "PAUSA_CURTA") tempoOriginal = configAtiva.duracaoPausaCurtaMin * 60;
+      if (fase === "PAUSA_LONGA") tempoOriginal = configAtiva.duracaoPausaLongaMin * 60;
+    }
 
     setTimeLeft(tempoOriginal);
     setSessaoInicio(null);
-    setCustomTempoTotal(null);
     setIsEditingTime(false);
   };
 
