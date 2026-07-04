@@ -51,7 +51,9 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  Usuario: 'Usuario'
+  Usuario: 'Usuario',
+  ConfiguracaoTimer: 'ConfiguracaoTimer',
+  SessaoEstudo: 'SessaoEstudo'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -61,9 +63,6 @@ export type ModelName = (typeof ModelName)[keyof typeof ModelName]
  */
 
 export const TransactionIsolationLevel = runtime.makeStrictEnum({
-  ReadUncommitted: 'ReadUncommitted',
-  ReadCommitted: 'ReadCommitted',
-  RepeatableRead: 'RepeatableRead',
   Serializable: 'Serializable'
 } as const)
 
@@ -81,6 +80,34 @@ export const UsuarioScalarFieldEnum = {
 export type UsuarioScalarFieldEnum = (typeof UsuarioScalarFieldEnum)[keyof typeof UsuarioScalarFieldEnum]
 
 
+export const ConfiguracaoTimerScalarFieldEnum = {
+  id: 'id',
+  usuarioId: 'usuarioId',
+  nome: 'nome',
+  duracaoFocoMin: 'duracaoFocoMin',
+  duracaoPausaCurtaMin: 'duracaoPausaCurtaMin',
+  duracaoPausaLongaMin: 'duracaoPausaLongaMin',
+  ciclosAtePausaLonga: 'ciclosAtePausaLonga',
+  ehPreset: 'ehPreset',
+  tipo: 'tipo',
+  criadoEm: 'criadoEm'
+} as const
+
+export type ConfiguracaoTimerScalarFieldEnum = (typeof ConfiguracaoTimerScalarFieldEnum)[keyof typeof ConfiguracaoTimerScalarFieldEnum]
+
+
+export const SessaoEstudoScalarFieldEnum = {
+  id: 'id',
+  usuarioId: 'usuarioId',
+  configuracaoId: 'configuracaoId',
+  inicio: 'inicio',
+  fim: 'fim',
+  ciclosCompletos: 'ciclosCompletos'
+} as const
+
+export type SessaoEstudoScalarFieldEnum = (typeof SessaoEstudoScalarFieldEnum)[keyof typeof SessaoEstudoScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -89,10 +116,10 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
-export const QueryMode = {
-  default: 'default',
-  insensitive: 'insensitive'
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
 } as const
 
-export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 

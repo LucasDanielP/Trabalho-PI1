@@ -4,15 +4,50 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
 }
 
 model Usuario {
-  id       String   @id @default(cuid())
-  nome     String
-  email    String   @unique
-  senha    String
-  criadoEm DateTime @default(now())
+  id            String   @id @default(cuid())
+  nome          String
+  email         String   @unique
+  senha         String
+  criadoEm      DateTime @default(now())
+
+  configuracoes ConfiguracaoTimer[]
+  sessoes       SessaoEstudo[]
 
   @@map("usuarios")
+}
+
+model ConfiguracaoTimer {
+  id                   String   @id @default(cuid())
+  usuarioId            String?
+  nome                 String
+  duracaoFocoMin       Int
+  duracaoPausaCurtaMin Int
+  duracaoPausaLongaMin Int
+  ciclosAtePausaLonga  Int
+  ehPreset             Boolean  @default(false)
+  tipo                 String?  // CLASSICO ou CUSTOMIZADO
+  criadoEm             DateTime @default(now())
+
+  usuario              Usuario? @relation(fields: [usuarioId], references: [id])
+  sessoes              SessaoEstudo[]
+
+  @@map("configuracoes_timer")
+}
+
+model SessaoEstudo {
+  id              String   @id @default(cuid())
+  usuarioId       String
+  configuracaoId  String
+  inicio          DateTime
+  fim             DateTime?
+  ciclosCompletos Int      @default(0)
+
+  usuario         Usuario           @relation(fields: [usuarioId], references: [id])
+  configuracao    ConfiguracaoTimer @relation(fields: [configuracaoId], references: [id])
+
+  @@map("sessoes_estudo")
 }

@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { mockSessoesEstudo, mockConfiguracoes } from "@/lib/mocks";
 import {
   Coffee,
   Flame,
@@ -28,8 +29,61 @@ const todayStats = [
 const periods = ["Semana", "Mês", "Ano"] as const;
 
 export default function DadosPage() {
-  const [activePeriod, setActivePeriod] =
-    useState<(typeof periods)[number]>("Semana");
+  const [activePeriod, setActivePeriod] = useState<(typeof periods)[number]>("Semana");
+  const [sessoes, setSessoes] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch("/api/sessoes")
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setSessoes(data);
+      })
+      .catch(console.error);
+  }, []);
+
+  let totalFoco = 0;
+  let totalCiclos = 0;
+  let hojeFoco = 0;
+  let hojeCiclos = 0;
+  let hojeDescanso = 0;
+
+  const hojeStr = new Date().toDateString();
+
+  // Misturar mocks para visualização na tela de testes
+  const mocksComConfig = mockSessoesEstudo.map(mock => ({
+    ...mock,
+    configuracao: mockConfiguracoes.find(c => c.id === mock.configuracaoId)
+  }));
+  
+  const allSessoes = [...sessoes, ...mocksComConfig];
+
+  allSessoes.forEach(s => {
+    const config = s.configuracao;
+    if (!config) return;
+    
+    const foco = config.duracaoFocoMin * s.ciclosCompletos;
+    const descanso = config.duracaoPausaCurtaMin * s.ciclosCompletos;
+    
+    totalFoco += foco;
+    totalCiclos += s.ciclosCompletos;
+    
+    if (new Date(s.inicio).toDateString() === hojeStr) {
+      hojeFoco += foco;
+      hojeCiclos += s.ciclosCompletos;
+      hojeDescanso += descanso;
+    }
+  });
+
+  const historyStats = [
+    { icon: Timer, label: "Total Tempo em Foco (min):", value: totalFoco.toString() },
+    { icon: RotateCcw, label: "Total de Ciclos:", value: totalCiclos.toString() },
+  ];
+
+  const todayStats = [
+    { icon: Timer, label: "Minutos trabalhados Hoje:", value: hojeFoco.toString() },
+    { icon: RotateCcw, label: "Ciclos Hoje:", value: hojeCiclos.toString() },
+    { icon: Coffee, label: "Minutos Descansados:", value: hojeDescanso.toString() },
+  ];
 
   return (
     <div className="flex min-h-[500px] flex-col">
