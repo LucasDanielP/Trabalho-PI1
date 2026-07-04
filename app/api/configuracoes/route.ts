@@ -8,7 +8,7 @@ export async function GET() {
     const usuarioId = session?.id;
 
     // Buscar presets (configurações globais) e as customizadas do usuário atual
-    const configuracoes = await prisma.configuracaoTimer.findMany({
+    let configuracoes = await prisma.configuracaoTimer.findMany({
       where: {
         OR: [
           { ehPreset: true },
@@ -17,6 +17,22 @@ export async function GET() {
       },
       orderBy: { criadoEm: 'asc' },
     });
+
+    if (configuracoes.length === 0) {
+      // Cria um preset padrão se o banco estiver completamente vazio
+      const presetPadrao = await prisma.configuracaoTimer.create({
+        data: {
+          nome: "Pomodoro Padrão",
+          duracaoFocoMin: 25,
+          duracaoPausaCurtaMin: 5,
+          duracaoPausaLongaMin: 15,
+          ciclosAtePausaLonga: 4,
+          ehPreset: true,
+          tipo: "CLASSICO"
+        }
+      });
+      configuracoes = [presetPadrao];
+    }
 
     return NextResponse.json(configuracoes);
   } catch (error) {
