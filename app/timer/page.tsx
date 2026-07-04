@@ -69,26 +69,34 @@ export default function Timer() {
     return () => clearInterval(intervalRef.current!);
   }, [isActive, timeLeft]);
 
+  const configAtiva = configAtual || {
+    id: "default",
+    nome: "Padrão",
+    duracaoFocoMin: 25,
+    duracaoPausaCurtaMin: 5,
+    duracaoPausaLongaMin: 15,
+    ciclosAtePausaLonga: 4,
+  };
+
   const avancarFase = async () => {
-    if (!configAtual) return;
     setCustomTempoTotal(null);
 
     let proximaFase: Fase = "FOCO";
-    let proximoTempo = configAtual.duracaoFocoMin * 60;
+    let proximoTempo = configAtiva.duracaoFocoMin * 60;
     let novosCiclos = ciclos;
 
     if (fase === "FOCO") {
       novosCiclos += 1;
       setCiclos(novosCiclos);
       
-      // Salva sessão no banco
-      if (sessaoInicio) {
+      // Salva sessão no banco (se não for o padrão temporário)
+      if (sessaoInicio && configAtiva.id !== "default") {
         try {
           await fetch("/api/sessoes", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              configuracaoId: configAtual.id,
+              configuracaoId: configAtiva.id,
               inicio: sessaoInicio.toISOString(),
               fim: new Date().toISOString(),
               ciclosCompletos: novosCiclos,
@@ -99,17 +107,17 @@ export default function Timer() {
         }
       }
 
-      if (novosCiclos % configAtual.ciclosAtePausaLonga === 0) {
+      if (novosCiclos % configAtiva.ciclosAtePausaLonga === 0) {
         proximaFase = "PAUSA_LONGA";
-        proximoTempo = configAtual.duracaoPausaLongaMin * 60;
+        proximoTempo = configAtiva.duracaoPausaLongaMin * 60;
       } else {
         proximaFase = "PAUSA_CURTA";
-        proximoTempo = configAtual.duracaoPausaCurtaMin * 60;
+        proximoTempo = configAtiva.duracaoPausaCurtaMin * 60;
       }
     } else {
       // Estava na pausa, volta pro foco
       proximaFase = "FOCO";
-      proximoTempo = configAtual.duracaoFocoMin * 60;
+      proximoTempo = configAtiva.duracaoFocoMin * 60;
       setSessaoInicio(new Date());
     }
 
@@ -126,10 +134,13 @@ export default function Timer() {
   };
 
   const resetTimer = () => {
-    if (!configAtual) return;
     setIsActive(false);
-    setFase("FOCO");
-    setTimeLeft(configAtual.duracaoFocoMin * 60);
+    
+    let tempoOriginal = configAtiva.duracaoFocoMin * 60;
+    if (fase === "PAUSA_CURTA") tempoOriginal = configAtiva.duracaoPausaCurtaMin * 60;
+    if (fase === "PAUSA_LONGA") tempoOriginal = configAtiva.duracaoPausaLongaMin * 60;
+
+    setTimeLeft(tempoOriginal);
     setSessaoInicio(null);
     setCustomTempoTotal(null);
     setIsEditingTime(false);
@@ -169,6 +180,8 @@ export default function Timer() {
     if (e.key === "Escape") setIsEditingTime(false);
   };
 
+  const [showPauseWarning, setShowPauseWarning] = useState(false);
+
   // Formatação do tempo
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
@@ -176,14 +189,31 @@ export default function Timer() {
 
   // Calculo de progresso circular
   let tempoTotalFase = customTempoTotal || 25 * 60;
-  if (!customTempoTotal && configAtual) {
-    if (fase === "FOCO") tempoTotalFase = configAtual.duracaoFocoMin * 60;
-    if (fase === "PAUSA_CURTA") tempoTotalFase = configAtual.duracaoPausaCurtaMin * 60;
-    if (fase === "PAUSA_LONGA") tempoTotalFase = configAtual.duracaoPausaLongaMin * 60;
+  if (!customTempoTotal && configAtiva) {
+    if (fase === "FOCO") tempoTotalFase = configAtiva.duracaoFocoMin * 60;
+    if (fase === "PAUSA_CURTA") tempoTotalFase = configAtiva.duracaoPausaCurtaMin * 60;
+    if (fase === "PAUSA_LONGA") tempoTotalFase = configAtiva.duracaoPausaLongaMin * 60;
   }
   const maxDashOffset = 753.98;
   const progress = Math.min(Math.max(timeLeft / tempoTotalFase, 0), 1);
   const strokeDashoffset = maxDashOffset * (1 - progress);
+
+  const handlePauseRequest = () => {
+    if (isActive && fase === "FOCO") {
+      setShowPauseWarning(true);
+    } else {
+      toggleTimer();
+    }
+  };
+
+  const confirmarPausa = () => {
+    setShowPauseWarning(false);
+    toggleTimer();
+  };
+
+  const cancelarPausa = () => {
+    setShowPauseWarning(false);
+  };
 
   return (
     <div className="flex flex-col h-full justify-between">
@@ -300,7 +330,7 @@ export default function Timer() {
         </button>
         
         <button 
-          onClick={toggleTimer}
+          onClick={handlePauseRequest}
           className={`w-40 border rounded-full py-2.5 font-medium transition-all flex items-center justify-center gap-2 text-sm tracking-wide cursor-pointer ${
             isActive 
               ? "border-[#BC2F32] text-[#BC2F32] bg-[#BC2F32]/10 hover:bg-[#BC2F32]/15 active:bg-[#BC2F32]/30" 
@@ -322,6 +352,34 @@ export default function Timer() {
           <StepForward size={20} strokeWidth={2} />
         </button>
       </div>
+
+      {/* Modal de Aviso de Pausa */}
+      {showPauseWarning && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-[#BC2F32] w-full max-w-sm rounded-3xl p-8 flex flex-col items-center text-center shadow-2xl border border-red-400/30 animate-in zoom-in-95 duration-200">
+            <h2 className="text-white text-2xl font-bold mb-4 uppercase tracking-wide">
+              Tem certeza?
+            </h2>
+            <p className="text-white/90 text-sm mb-8 leading-relaxed">
+              Pausar agora pode quebrar seu estado de foco e prejudicar o ciclo atual.
+            </p>
+            <div className="flex flex-col gap-3 w-full">
+              <button 
+                onClick={cancelarPausa}
+                className="w-full bg-white text-[#BC2F32] font-bold py-3 rounded-full hover:bg-gray-100 transition-colors shadow-md"
+              >
+                CONTINUAR FOCANDO
+              </button>
+              <button 
+                onClick={confirmarPausa}
+                className="w-full bg-transparent text-white border border-white/30 font-semibold py-3 rounded-full hover:bg-white/10 transition-colors"
+              >
+                PAUSAR MESMO ASSIM
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
