@@ -1,7 +1,9 @@
 import { Prisma } from "@/lib/generated/prisma/client";
+import { compararSenha, hashSenha } from "@/lib/auth/password";
 import { prisma } from "@/lib/db";
 import type {
   CreateUsuarioInput,
+  LoginUsuarioInput,
   UpdateUsuarioInput,
   Usuario,
 } from "@/interfaces/User";
@@ -23,7 +25,11 @@ function serializeUsuario(usuario: {
 export class UsuarioServiceError extends Error {
   constructor(
     message: string,
-    public readonly code: "NOT_FOUND" | "EMAIL_EM_USO" | "VALIDATION",
+    public readonly code:
+      | "NOT_FOUND"
+      | "EMAIL_EM_USO"
+      | "VALIDATION"
+      | "CREDENCIAIS_INVALIDAS",
   ) {
     super(message);
     this.name = "UsuarioServiceError";
@@ -57,14 +63,20 @@ export async function getUsuarioById(id: string): Promise<Usuario | null> {
   return usuario ? serializeUsuario(usuario) : null;
 }
 
+export async function getUsuarioByEmail(email: string) {
+  return prisma.usuario.findUnique({ where: { email } });
+}
+
 export async function createUsuario(
   input: CreateUsuarioInput,
 ): Promise<Usuario> {
   try {
+    const senhaHash = await hashSenha(input.senha);
     const usuario = await prisma.usuario.create({
       data: {
         nome: input.nome,
         email: input.email,
+        senha: senhaHash,
       },
     });
 
@@ -72,6 +84,30 @@ export async function createUsuario(
   } catch (error) {
     handlePrismaError(error);
   }
+}
+
+export async function autenticarUsuario(
+  input: LoginUsuarioInput,
+): Promise<Usuario> {
+  const usuario = await getUsuarioByEmail(input.email);
+
+  if (!usuario) {
+    throw new UsuarioServiceError(
+      "E-mail ou senha inválidos",
+      "CREDENCIAIS_INVALIDAS",
+    );
+  }
+
+  const senhaValida = await compararSenha(input.senha, usuario.senha);
+
+  if (!senhaValida) {
+    throw new UsuarioServiceError(
+      "E-mail ou senha inválidos",
+      "CREDENCIAIS_INVALIDAS",
+    );
+  }
+
+  return serializeUsuario(usuario);
 }
 
 export async function updateUsuario(

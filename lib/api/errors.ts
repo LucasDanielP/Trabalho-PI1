@@ -21,6 +21,10 @@ export function handleRouteError(error: unknown) {
       return jsonError(error.message, 409);
     }
 
+    if (error.code === "CREDENCIAIS_INVALIDAS") {
+      return jsonError(error.message, 401);
+    }
+
     return jsonError(error.message, 400);
   }
 

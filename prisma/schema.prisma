@@ -4,13 +4,14 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 model Usuario {
   id       String   @id @default(cuid())
   nome     String
   email    String   @unique
+  senha    String
   criadoEm DateTime @default(now())
 
   @@map("usuarios")

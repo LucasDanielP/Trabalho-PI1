@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { AppShell } from "@/components/layout/app-shell";
 import { DeleteUsuarioButton } from "@/components/usuarios/delete-usuario-button";
 import { UsuarioForm } from "@/components/usuarios/usuario-form";
 import { buttonVariants } from "@/components/ui/button";
@@ -30,17 +29,21 @@ export default async function UsuarioPage({ params }: UsuarioPageProps) {
   }
 
   return (
-    <AppShell showNav={false} contentClassName="mx-auto max-w-2xl">
+    <div className="mx-auto w-full max-w-2xl">
       <div className="mb-8 space-y-1">
-        <p className="ds-label text-primary">Perfil</p>
-        <h1 className="text-3xl font-bold tracking-tight">{usuario.nome}</h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#04D939]">
+          Perfil
+        </p>
+        <h1 className="text-3xl font-bold tracking-tight text-white">
+          {usuario.nome}
+        </h1>
+        <p className="text-sm text-[#8fa8c4]">
           Conta criada em {formatDate(usuario.criadoEm)}
         </p>
       </div>
 
-      <section className="ds-card mb-6 p-6">
-        <h2 className="mb-4 text-lg font-semibold">Editar perfil</h2>
+      <section className="mb-6 rounded-2xl border border-white/5 bg-[#0d1826]/80 p-6">
+        <h2 className="mb-4 text-lg font-semibold text-white">Editar perfil</h2>
         <UsuarioForm
           mode="edit"
           usuarioId={usuario.id}
@@ -51,11 +54,11 @@ export default async function UsuarioPage({ params }: UsuarioPageProps) {
         />
       </section>
 
-      <section className="mb-8 rounded-2xl border border-destructive/40 bg-destructive/5 p-6">
-        <h2 className="mb-2 text-lg font-semibold text-destructive">
+      <section className="mb-8 rounded-2xl border border-[#BC2F32]/40 bg-[#BC2F32]/5 p-6">
+        <h2 className="mb-2 text-lg font-semibold text-[#ff8a8a]">
           Zona de perigo
         </h2>
-        <p className="mb-4 text-sm text-muted-foreground">
+        <p className="mb-4 text-sm text-[#8fa8c4]">
           Excluir permanentemente esta conta e todos os dados associados.
         </p>
         <DeleteUsuarioButton
@@ -78,6 +81,6 @@ export default async function UsuarioPage({ params }: UsuarioPageProps) {
           Voltar para o início
         </Link>
       </div>
-    </AppShell>
+    </div>
   );
 }

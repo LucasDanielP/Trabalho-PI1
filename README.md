@@ -56,7 +56,9 @@ classDiagram
         +String id
         +String nome
         +String email
+        +String senha
         +DateTime criadoEm
+        +autenticar(email: String, senha: String) boolean
         +iniciarSessao(config: ConfiguracaoTimer) SessaoEstudo
         +obterSessoes(periodo: Periodo) List~SessaoEstudo~
         +obterResumoPorDia(data: Date) ResumoDiario
@@ -152,13 +154,13 @@ classDiagram
 
 | Entidade             | Tipo        | Responsabilidade                                              |
 |----------------------|-------------|---------------------------------------------------------------|
-| `Usuario`            | Entidade    | Identifica quem usa a plataforma e acessa sessões e histórico |
+| `Usuario`            | Entidade    | Identifica quem usa a plataforma; credenciais (`email`, `senha`) e acesso a sessões e histórico |
 | `ConfiguracaoTimer`  | Entidade    | Define durações e ciclos do Pomodoro (preset ou customizado)  |
 | `SessaoEstudo`       | Entidade    | Fonte da verdade: registra início, fim e ciclos de cada sessão |
 | `EstadoTimer`        | Entidade    | Controla a fase atual e o tempo restante durante a sessão     |
 | `ResumoDiario`       | Calculado   | Agrupa sessões de um dia e totaliza ciclos e tempo            |
 | `GraficoEstudo`      | Calculado   | Transforma sessões agrupadas por data em visualização gráfica |
-a
+
 ---
 
 ### Ferramentas escolhidas
@@ -169,7 +171,7 @@ a
 | Build            | **Next.js** + **pnpm**  | Compilação, bundling e scripts de desenvolvimento/produção  |
 | Testes           | **Vitest** + **Testing Library** | Testes unitários e de componentes React              |
 | Lint / qualidade | **ESLint**              | Análise estática e padronização de código                   |
-| Issue tracking   | **GitHub Issues**       | Registro de bugs, tarefas e acompanhamento do backlog        |
+| Issue tracking   | **Trello**       | Registro de bugs, tarefas e acompanhamento do backlog        |
 | CI/CD            | **GitHub Actions**      | Pipeline automatizado de lint, testes e build               |
 | Container        | **Docker**              | Empacotamento da aplicação para execução em ambientes isolados |
 
