@@ -85,7 +85,6 @@ export type UsuarioScalarFieldEnum = (typeof UsuarioScalarFieldEnum)[keyof typeo
 
 export const ConfiguracaoTimerScalarFieldEnum = {
   id: 'id',
-  usuarioId: 'usuarioId',
   nome: 'nome',
   duracaoFocoMin: 'duracaoFocoMin',
   duracaoPausaCurtaMin: 'duracaoPausaCurtaMin',
@@ -93,6 +92,7 @@ export const ConfiguracaoTimerScalarFieldEnum = {
   ciclosAtePausaLonga: 'ciclosAtePausaLonga',
   ehPreset: 'ehPreset',
   tipo: 'tipo',
+  usuarioId: 'usuarioId',
   criadoEm: 'criadoEm'
 } as const
 
@@ -105,7 +105,10 @@ export const SessaoEstudoScalarFieldEnum = {
   configuracaoId: 'configuracaoId',
   inicio: 'inicio',
   fim: 'fim',
-  ciclosCompletos: 'ciclosCompletos'
+  ciclosCompletos: 'ciclosCompletos',
+  faseAtual: 'faseAtual',
+  cicloAtual: 'cicloAtual',
+  finalizada: 'finalizada'
 } as const
 
 export type SessaoEstudoScalarFieldEnum = (typeof SessaoEstudoScalarFieldEnum)[keyof typeof SessaoEstudoScalarFieldEnum]

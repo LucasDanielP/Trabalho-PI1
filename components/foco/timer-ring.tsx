@@ -1,45 +1,69 @@
+"use client";
+
 type TimerRingProps = {
-  time: string;
-  progress: number;
+  progresso: number;
+  tempo: string;
+  faseLabel: string;
+  cicloLabel: string;
 };
 
-export function TimerRing({ time, progress }: TimerRingProps) {
-  const radius = 120;
-  const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference * (1 - progress);
+const RAIO = 120;
+const CIRCUNFERENCIA = 2 * Math.PI * RAIO;
+
+export function TimerRing({
+  progresso,
+  tempo,
+  faseLabel,
+  cicloLabel,
+}: TimerRingProps) {
+  const offset = CIRCUNFERENCIA * (1 - Math.min(1, Math.max(0, progresso)));
 
   return (
-    <div className="relative flex size-72 items-center justify-center md:size-80">
+    <div className="relative flex items-center justify-center">
       <svg
-        className="-rotate-90"
-        width="100%"
-        height="100%"
-        viewBox="0 0 280 280"
-        aria-hidden
+        className="h-72 w-72 -rotate-90 transform"
+        style={{ filter: "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.4))" }}
       >
+        <defs>
+          <filter id="inner-shadow">
+            <feOffset dx="0" dy="5" />
+            <feGaussianBlur stdDeviation="2" result="offset-blur" />
+            <feComposite operator="out" in="SourceGraphic" in2="offset-blur" result="inverse" />
+            <feFlood floodColor="black" floodOpacity="0.6" result="color" />
+            <feComposite operator="in" in="color" in2="inverse" result="shadow" />
+            <feComposite operator="over" in="shadow" in2="SourceGraphic" />
+          </filter>
+        </defs>
         <circle
-          cx="140"
-          cy="140"
-          r={radius}
-          fill="none"
-          stroke="rgba(110,245,74,0.15)"
-          strokeWidth="18"
+          cx="144"
+          cy="144"
+          r={RAIO}
+          stroke="#0a3f24"
+          strokeWidth="16"
+          fill="transparent"
         />
         <circle
-          cx="140"
-          cy="140"
-          r={radius}
-          fill="none"
-          stroke="#6ef54a"
-          strokeWidth="18"
+          cx="144"
+          cy="144"
+          r={RAIO}
+          stroke="#04D939"
+          strokeWidth="16"
+          fill="transparent"
+          strokeDasharray={CIRCUNFERENCIA}
+          strokeDashoffset={offset}
           strokeLinecap="round"
-          strokeDasharray={circumference}
-          strokeDashoffset={strokeDashoffset}
+          filter="url(#inner-shadow)"
+          className="transition-all duration-1000 ease-linear"
         />
       </svg>
-      <span className="absolute text-5xl font-bold tracking-widest text-foreground md:text-6xl">
-        {time}
-      </span>
+
+      <div className="absolute flex flex-col items-center justify-center text-center">
+        <span className="text-5xl font-semibold tracking-wide text-white tabular-nums">
+          {tempo}
+        </span>
+        <span className="mt-2 text-sm font-medium text-[#04D939]">{faseLabel}</span>
+        <span className="text-xs text-[#8fa8c4]">{cicloLabel}</span>
+      </div>
     </div>
   );
 }

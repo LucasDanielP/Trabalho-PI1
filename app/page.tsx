@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Play } from "lucide-react";
+import { Play, ScrollText } from "lucide-react";
 
 export default function Home() {
   return (
@@ -26,6 +26,14 @@ export default function Home() {
           COMEÇAR SEM CONTA
         </Link>
 
+        {/* Botão Terciário (Outline) para Logs */}
+        <Link 
+          href="/logs"
+          className="w-full border border-slate-500 text-slate-400 bg-slate-500/5 hover:bg-slate-400 hover:text-[#012340] rounded-full py-4 font-bold tracking-wide transition-all duration-300 flex items-center justify-center gap-2 mt-2"
+        >
+          <ScrollText size={18} />
+          VER HISTÓRICO (LOGS)
+        </Link>
       </div>
     </div>
   );

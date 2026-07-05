@@ -1,83 +1,43 @@
 import { NextResponse } from "next/server";
+
 import { getSessionUsuario } from "@/lib/auth/session";
-import { prisma } from "@/lib/db";
+import { handleRouteError } from "@/lib/api/errors";
+import {
+  createConfiguracao,
+  listConfiguracoes,
+  seedPresetsIfEmpty,
+} from "@/lib/services/configuracao.service";
+import { createConfiguracaoSchema } from "@/lib/validations/timer";
 
 export async function GET() {
   try {
+    await seedPresetsIfEmpty();
     const session = await getSessionUsuario();
-    const usuarioId = session?.id;
-
-    // Buscar presets (configurações globais) e as customizadas do usuário atual
-    let configuracoes = await prisma.configuracaoTimer.findMany({
-      where: {
-        OR: [
-          { ehPreset: true },
-          usuarioId ? { usuarioId } : {},
-        ],
-      },
-      orderBy: { criadoEm: 'asc' },
-    });
-
-    if (configuracoes.length === 0) {
-      // Cria um preset padrão se o banco estiver completamente vazio
-      const presetPadrao = await prisma.configuracaoTimer.create({
-        data: {
-          nome: "Pomodoro Padrão",
-          duracaoFocoMin: 25,
-          duracaoPausaCurtaMin: 5,
-          duracaoPausaLongaMin: 15,
-          ciclosAtePausaLonga: 4,
-          ehPreset: true,
-          tipo: "CLASSICO"
-        }
-      });
-      configuracoes = [presetPadrao];
-    }
+    const configuracoes = await listConfiguracoes(session?.id);
 
     return NextResponse.json(configuracoes);
   } catch (error) {
-    return NextResponse.json(
-      { error: "Erro ao buscar configurações" },
-      { status: 500 }
-    );
+    return handleRouteError(error);
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
     const session = await getSessionUsuario();
-    
+
     if (!session) {
-      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Faça login para criar configurações personalizadas" },
+        { status: 401 },
+      );
     }
 
-    const body = await req.json();
-    const {
-      nome,
-      duracaoFocoMin,
-      duracaoPausaCurtaMin,
-      duracaoPausaLongaMin,
-      ciclosAtePausaLonga,
-    } = body;
+    const body = await request.json();
+    const data = createConfiguracaoSchema.parse(body);
+    const configuracao = await createConfiguracao(session.id, data);
 
-    const novaConfig = await prisma.configuracaoTimer.create({
-      data: {
-        nome,
-        duracaoFocoMin,
-        duracaoPausaCurtaMin,
-        duracaoPausaLongaMin,
-        ciclosAtePausaLonga,
-        usuarioId: session.id,
-        ehPreset: false,
-        tipo: "CUSTOMIZADO",
-      },
-    });
-
-    return NextResponse.json(novaConfig, { status: 201 });
+    return NextResponse.json(configuracao, { status: 201 });
   } catch (error) {
-    return NextResponse.json(
-      { error: "Erro ao criar configuração" },
-      { status: 500 }
-    );
+    return handleRouteError(error);
   }
 }
