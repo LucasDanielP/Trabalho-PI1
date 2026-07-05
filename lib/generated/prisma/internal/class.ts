@@ -19,8 +19,8 @@ const config: runtime.GetPrismaClientConfig = {
   "previewFeatures": [],
   "clientVersion": "7.8.0",
   "engineVersion": "3c6e192761c0362d496ed980de936e2f3cebcd3a",
-  "activeProvider": "sqlite",
-  "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"../lib/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"sqlite\"\n}\n\nmodel Usuario {\n  id       String   @id @default(cuid())\n  nome     String\n  email    String   @unique\n  senha    String\n  criadoEm DateTime @default(now())\n\n  configuracoes ConfiguracaoTimer[]\n  sessoes       SessaoEstudo[]\n\n  @@map(\"usuarios\")\n}\n\nmodel ConfiguracaoTimer {\n  id                   String   @id @default(cuid())\n  usuarioId            String?\n  nome                 String\n  duracaoFocoMin       Int\n  duracaoPausaCurtaMin Int\n  duracaoPausaLongaMin Int\n  ciclosAtePausaLonga  Int\n  ehPreset             Boolean  @default(false)\n  tipo                 String? // CLASSICO ou CUSTOMIZADO\n  criadoEm             DateTime @default(now())\n\n  usuario Usuario?       @relation(fields: [usuarioId], references: [id])\n  sessoes SessaoEstudo[]\n\n  @@map(\"configuracoes_timer\")\n}\n\nmodel SessaoEstudo {\n  id              String    @id @default(cuid())\n  usuarioId       String\n  configuracaoId  String\n  inicio          DateTime\n  fim             DateTime?\n  ciclosCompletos Int       @default(0)\n\n  usuario      Usuario           @relation(fields: [usuarioId], references: [id])\n  configuracao ConfiguracaoTimer @relation(fields: [configuracaoId], references: [id])\n\n  @@map(\"sessoes_estudo\")\n}\n",
+  "activeProvider": "postgresql",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"../lib/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel Usuario {\n  id       String   @id @default(cuid())\n  nome     String\n  email    String   @unique\n  senha    String\n  criadoEm DateTime @default(now())\n\n  configuracoes ConfiguracaoTimer[]\n  sessoes       SessaoEstudo[]\n\n  @@map(\"usuarios\")\n}\n\nmodel ConfiguracaoTimer {\n  id                   String   @id @default(cuid())\n  usuarioId            String?\n  nome                 String\n  duracaoFocoMin       Int\n  duracaoPausaCurtaMin Int\n  duracaoPausaLongaMin Int\n  ciclosAtePausaLonga  Int\n  ehPreset             Boolean  @default(false)\n  tipo                 String? // CLASSICO ou CUSTOMIZADO\n  criadoEm             DateTime @default(now())\n\n  usuario Usuario?       @relation(fields: [usuarioId], references: [id])\n  sessoes SessaoEstudo[]\n\n  @@map(\"configuracoes_timer\")\n}\n\nmodel SessaoEstudo {\n  id              String    @id @default(cuid())\n  usuarioId       String\n  configuracaoId  String\n  inicio          DateTime\n  fim             DateTime?\n  ciclosCompletos Int       @default(0)\n\n  usuario      Usuario           @relation(fields: [usuarioId], references: [id])\n  configuracao ConfiguracaoTimer @relation(fields: [configuracaoId], references: [id])\n\n  @@map(\"sessoes_estudo\")\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},
@@ -45,10 +45,10 @@ async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Modul
 }
 
 config.compilerWasm = {
-  getRuntime: async () => await import("@prisma/client/runtime/query_compiler_fast_bg.sqlite.mjs"),
+  getRuntime: async () => await import("@prisma/client/runtime/query_compiler_fast_bg.postgresql.mjs"),
 
   getQueryCompilerWasmModule: async () => {
-    const { wasm } = await import("@prisma/client/runtime/query_compiler_fast_bg.sqlite.wasm-base64.mjs")
+    const { wasm } = await import("@prisma/client/runtime/query_compiler_fast_bg.postgresql.wasm-base64.mjs")
     return await decodeBase64AsWasm(wasm)
   },
 

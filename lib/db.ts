@@ -1,4 +1,5 @@
-import { PrismaLibSql } from "@prisma/adapter-libsql";
+import { Pool } from "pg";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@/lib/generated/prisma/client";
 
 const globalForPrisma = globalThis as unknown as {
@@ -6,14 +7,15 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function createPrismaClient() {
-  const url = process.env.DATABASE_URL;
+  const connectionString = process.env.DATABASE_URL;
 
-  if (!url) {
-    throw new Error("DATABASE_URL não está configurado no ambiente");
+  if (!connectionString) {
+    throw new Error("DATABASE_URL não está configurado");
   }
 
-  const adapter = new PrismaLibSql({ url });
-
+  const pool = new Pool({ connectionString });
+  const adapter = new PrismaPg(pool);
+  
   return new PrismaClient({ adapter });
 }
 
