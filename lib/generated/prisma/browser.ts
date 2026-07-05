@@ -22,3 +22,13 @@ export * from './enums';
  * 
  */
 export type Usuario = Prisma.UsuarioModel
+/**
+ * Model ConfiguracaoTimer
+ * 
+ */
+export type ConfiguracaoTimer = Prisma.ConfiguracaoTimerModel
+/**
+ * Model SessaoEstudo
+ * 
+ */
+export type SessaoEstudo = Prisma.SessaoEstudoModel

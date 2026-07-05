@@ -384,7 +384,9 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 
 export const ModelName = {
-  Usuario: 'Usuario'
+  Usuario: 'Usuario',
+  ConfiguracaoTimer: 'ConfiguracaoTimer',
+  SessaoEstudo: 'SessaoEstudo'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -400,7 +402,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "usuario"
+    modelProps: "usuario" | "configuracaoTimer" | "sessaoEstudo"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -478,6 +480,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ConfiguracaoTimer: {
+      payload: Prisma.$ConfiguracaoTimerPayload<ExtArgs>
+      fields: Prisma.ConfiguracaoTimerFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ConfiguracaoTimerFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConfiguracaoTimerPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ConfiguracaoTimerFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConfiguracaoTimerPayload>
+        }
+        findFirst: {
+          args: Prisma.ConfiguracaoTimerFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConfiguracaoTimerPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ConfiguracaoTimerFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConfiguracaoTimerPayload>
+        }
+        findMany: {
+          args: Prisma.ConfiguracaoTimerFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConfiguracaoTimerPayload>[]
+        }
+        create: {
+          args: Prisma.ConfiguracaoTimerCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConfiguracaoTimerPayload>
+        }
+        createMany: {
+          args: Prisma.ConfiguracaoTimerCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ConfiguracaoTimerCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConfiguracaoTimerPayload>[]
+        }
+        delete: {
+          args: Prisma.ConfiguracaoTimerDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConfiguracaoTimerPayload>
+        }
+        update: {
+          args: Prisma.ConfiguracaoTimerUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConfiguracaoTimerPayload>
+        }
+        deleteMany: {
+          args: Prisma.ConfiguracaoTimerDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ConfiguracaoTimerUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ConfiguracaoTimerUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConfiguracaoTimerPayload>[]
+        }
+        upsert: {
+          args: Prisma.ConfiguracaoTimerUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConfiguracaoTimerPayload>
+        }
+        aggregate: {
+          args: Prisma.ConfiguracaoTimerAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateConfiguracaoTimer>
+        }
+        groupBy: {
+          args: Prisma.ConfiguracaoTimerGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ConfiguracaoTimerGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ConfiguracaoTimerCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ConfiguracaoTimerCountAggregateOutputType> | number
+        }
+      }
+    }
+    SessaoEstudo: {
+      payload: Prisma.$SessaoEstudoPayload<ExtArgs>
+      fields: Prisma.SessaoEstudoFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SessaoEstudoFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SessaoEstudoPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SessaoEstudoFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SessaoEstudoPayload>
+        }
+        findFirst: {
+          args: Prisma.SessaoEstudoFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SessaoEstudoPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SessaoEstudoFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SessaoEstudoPayload>
+        }
+        findMany: {
+          args: Prisma.SessaoEstudoFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SessaoEstudoPayload>[]
+        }
+        create: {
+          args: Prisma.SessaoEstudoCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SessaoEstudoPayload>
+        }
+        createMany: {
+          args: Prisma.SessaoEstudoCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SessaoEstudoCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SessaoEstudoPayload>[]
+        }
+        delete: {
+          args: Prisma.SessaoEstudoDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SessaoEstudoPayload>
+        }
+        update: {
+          args: Prisma.SessaoEstudoUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SessaoEstudoPayload>
+        }
+        deleteMany: {
+          args: Prisma.SessaoEstudoDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SessaoEstudoUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SessaoEstudoUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SessaoEstudoPayload>[]
+        }
+        upsert: {
+          args: Prisma.SessaoEstudoUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SessaoEstudoPayload>
+        }
+        aggregate: {
+          args: Prisma.SessaoEstudoAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSessaoEstudo>
+        }
+        groupBy: {
+          args: Prisma.SessaoEstudoGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SessaoEstudoGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SessaoEstudoCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SessaoEstudoCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -528,6 +678,37 @@ export const UsuarioScalarFieldEnum = {
 export type UsuarioScalarFieldEnum = (typeof UsuarioScalarFieldEnum)[keyof typeof UsuarioScalarFieldEnum]
 
 
+export const ConfiguracaoTimerScalarFieldEnum = {
+  id: 'id',
+  nome: 'nome',
+  duracaoFocoMin: 'duracaoFocoMin',
+  duracaoPausaCurtaMin: 'duracaoPausaCurtaMin',
+  duracaoPausaLongaMin: 'duracaoPausaLongaMin',
+  ciclosAtePausaLonga: 'ciclosAtePausaLonga',
+  ehPreset: 'ehPreset',
+  tipo: 'tipo',
+  usuarioId: 'usuarioId',
+  criadoEm: 'criadoEm'
+} as const
+
+export type ConfiguracaoTimerScalarFieldEnum = (typeof ConfiguracaoTimerScalarFieldEnum)[keyof typeof ConfiguracaoTimerScalarFieldEnum]
+
+
+export const SessaoEstudoScalarFieldEnum = {
+  id: 'id',
+  usuarioId: 'usuarioId',
+  configuracaoId: 'configuracaoId',
+  inicio: 'inicio',
+  fim: 'fim',
+  ciclosCompletos: 'ciclosCompletos',
+  faseAtual: 'faseAtual',
+  cicloAtual: 'cicloAtual',
+  finalizada: 'finalizada'
+} as const
+
+export type SessaoEstudoScalarFieldEnum = (typeof SessaoEstudoScalarFieldEnum)[keyof typeof SessaoEstudoScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -542,6 +723,14 @@ export const QueryMode = {
 } as const
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
 
@@ -589,6 +778,55 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
  * Reference to a field of type 'Int[]'
  */
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
+ * Reference to a field of type 'PresetTimer'
+ */
+export type EnumPresetTimerFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PresetTimer'>
+    
+
+
+/**
+ * Reference to a field of type 'PresetTimer[]'
+ */
+export type ListEnumPresetTimerFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PresetTimer[]'>
+    
+
+
+/**
+ * Reference to a field of type 'FaseTimer'
+ */
+export type EnumFaseTimerFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FaseTimer'>
+    
+
+
+/**
+ * Reference to a field of type 'FaseTimer[]'
+ */
+export type ListEnumFaseTimerFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FaseTimer[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Float'
+ */
+export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+/**
+ * Reference to a field of type 'Float[]'
+ */
+export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
 
 /**
@@ -702,6 +940,8 @@ export type PrismaClientOptions = ({
 }
 export type GlobalOmitConfig = {
   usuario?: Prisma.UsuarioOmit
+  configuracaoTimer?: Prisma.ConfiguracaoTimerOmit
+  sessaoEstudo?: Prisma.SessaoEstudoOmit
 }
 
 /* Types for Logging */

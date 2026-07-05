@@ -7,12 +7,58 @@ datasource db {
   provider = "postgresql"
 }
 
+enum PresetTimer {
+  CLASSICO
+  CUSTOMIZADO
+}
+
+enum FaseTimer {
+  FOCO
+  PAUSA_CURTA
+  PAUSA_LONGA
+}
+
 model Usuario {
-  id       String   @id @default(cuid())
-  nome     String
-  email    String   @unique
-  senha    String
-  criadoEm DateTime @default(now())
+  id              String              @id @default(cuid())
+  nome            String
+  email           String              @unique
+  senha           String
+  criadoEm        DateTime            @default(now())
+  configuracoes   ConfiguracaoTimer[]
+  sessoes         SessaoEstudo[]
 
   @@map("usuarios")
+}
+
+model ConfiguracaoTimer {
+  id                    String         @id @default(cuid())
+  nome                  String
+  duracaoFocoMin        Int
+  duracaoPausaCurtaMin  Int
+  duracaoPausaLongaMin  Int
+  ciclosAtePausaLonga   Int
+  ehPreset              Boolean        @default(false)
+  tipo                  PresetTimer    @default(CUSTOMIZADO)
+  usuarioId             String?
+  usuario               Usuario?       @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  criadoEm              DateTime       @default(now())
+  sessoes               SessaoEstudo[]
+
+  @@map("configuracoes_timer")
+}
+
+model SessaoEstudo {
+  id               String            @id @default(cuid())
+  usuarioId        String
+  usuario          Usuario           @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  configuracaoId   String
+  configuracao     ConfiguracaoTimer @relation(fields: [configuracaoId], references: [id])
+  inicio           DateTime          @default(now())
+  fim              DateTime?
+  ciclosCompletos  Int               @default(0)
+  faseAtual        FaseTimer         @default(FOCO)
+  cicloAtual       Int               @default(1)
+  finalizada       Boolean           @default(false)
+
+  @@map("sessoes_estudo")
 }

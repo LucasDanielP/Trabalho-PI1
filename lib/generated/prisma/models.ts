@@ -9,4 +9,6 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/Usuario'
+export type * from './models/ConfiguracaoTimer'
+export type * from './models/SessaoEstudo'
 export type * from './commonInputTypes'

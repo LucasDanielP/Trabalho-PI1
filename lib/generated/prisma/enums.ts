@@ -9,7 +9,18 @@
 * 🟢 You can import this file directly.
 */
 
+export const PresetTimer = {
+  CLASSICO: 'CLASSICO',
+  CUSTOMIZADO: 'CUSTOMIZADO'
+} as const
+
+export type PresetTimer = (typeof PresetTimer)[keyof typeof PresetTimer]
 
 
-// This file is empty because there are no enums in the schema.
-export {}
+export const FaseTimer = {
+  FOCO: 'FOCO',
+  PAUSA_CURTA: 'PAUSA_CURTA',
+  PAUSA_LONGA: 'PAUSA_LONGA'
+} as const
+
+export type FaseTimer = (typeof FaseTimer)[keyof typeof FaseTimer]

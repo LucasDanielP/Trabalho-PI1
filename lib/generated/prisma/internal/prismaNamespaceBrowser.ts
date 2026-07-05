@@ -51,7 +51,9 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  Usuario: 'Usuario'
+  Usuario: 'Usuario',
+  ConfiguracaoTimer: 'ConfiguracaoTimer',
+  SessaoEstudo: 'SessaoEstudo'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -81,6 +83,37 @@ export const UsuarioScalarFieldEnum = {
 export type UsuarioScalarFieldEnum = (typeof UsuarioScalarFieldEnum)[keyof typeof UsuarioScalarFieldEnum]
 
 
+export const ConfiguracaoTimerScalarFieldEnum = {
+  id: 'id',
+  nome: 'nome',
+  duracaoFocoMin: 'duracaoFocoMin',
+  duracaoPausaCurtaMin: 'duracaoPausaCurtaMin',
+  duracaoPausaLongaMin: 'duracaoPausaLongaMin',
+  ciclosAtePausaLonga: 'ciclosAtePausaLonga',
+  ehPreset: 'ehPreset',
+  tipo: 'tipo',
+  usuarioId: 'usuarioId',
+  criadoEm: 'criadoEm'
+} as const
+
+export type ConfiguracaoTimerScalarFieldEnum = (typeof ConfiguracaoTimerScalarFieldEnum)[keyof typeof ConfiguracaoTimerScalarFieldEnum]
+
+
+export const SessaoEstudoScalarFieldEnum = {
+  id: 'id',
+  usuarioId: 'usuarioId',
+  configuracaoId: 'configuracaoId',
+  inicio: 'inicio',
+  fim: 'fim',
+  ciclosCompletos: 'ciclosCompletos',
+  faseAtual: 'faseAtual',
+  cicloAtual: 'cicloAtual',
+  finalizada: 'finalizada'
+} as const
+
+export type SessaoEstudoScalarFieldEnum = (typeof SessaoEstudoScalarFieldEnum)[keyof typeof SessaoEstudoScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -95,4 +128,12 @@ export const QueryMode = {
 } as const
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 

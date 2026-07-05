@@ -28,6 +28,21 @@ export function handleRouteError(error: unknown) {
     return jsonError(error.message, 400);
   }
 
+  if (error instanceof Error) {
+    if (error.name === "ConfiguracaoServiceError") {
+      const serviceError = error as { code?: string; message: string };
+      if (serviceError.code === "NOT_FOUND") return jsonError(error.message, 404);
+      if (serviceError.code === "FORBIDDEN") return jsonError(error.message, 403);
+      if (serviceError.code === "PRESET_READONLY") return jsonError(error.message, 403);
+    }
+
+    if (error.name === "SessaoServiceError") {
+      const serviceError = error as { code?: string; message: string };
+      if (serviceError.code === "NOT_FOUND") return jsonError(error.message, 404);
+      if (serviceError.code === "FORBIDDEN") return jsonError(error.message, 403);
+    }
+  }
+
   console.error(error);
   return jsonError("Erro interno do servidor", 500);
 }
