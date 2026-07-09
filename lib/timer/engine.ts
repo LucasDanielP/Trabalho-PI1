@@ -37,7 +37,7 @@ export function criarEstadoInicial(
     cicloAtual: 1,
     ciclosCompletos: 0,
     tempoRestanteSeg: duracaoFaseEmSegundos("FOCO", config),
-    pausado: false,
+    pausado: true,
   };
 }
 

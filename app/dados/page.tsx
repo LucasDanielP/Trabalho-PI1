@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import {
   Coffee,
   Flame,
@@ -9,7 +10,6 @@ import {
 } from "lucide-react";
 
 import { FocoLayout } from "@/components/layout/foco-nav";
-import { FocoPagesProvider } from "@/components/foco/foco-pages-provider";
 import { calcularOfensiva, calcularTempos } from "@/lib/sessao/calculos";
 import { getGuestSessoes } from "@/lib/sessao/guest-storage";
 import type { ResumoDados } from "@/interfaces/Sessao";
@@ -80,6 +80,7 @@ function DadosContent() {
   const [activePeriod, setActivePeriod] =
     useState<(typeof periods)[number]>("Semana");
   const [resumo, setResumo] = useState<ResumoDados | null>(null);
+  const [isGuest, setIsGuest] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -90,11 +91,36 @@ function DadosContent() {
         const res = await fetch(`/api/dados?periodo=${activePeriod}`);
         setResumo(await res.json());
       } else {
-        setResumo(buildGuestResumo(getGuestSessoes(), activePeriod));
+        setIsGuest(true);
       }
     }
     load();
   }, [activePeriod]);
+
+  if (isGuest) {
+    return (
+      <div className="flex h-96 flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 p-12 text-center">
+        <p className="text-lg font-semibold text-white">Estatísticas Exclusivas</p>
+        <p className="mt-2 text-sm text-[#8fa8c4]">
+          Crie uma conta para acompanhar sua evolução, ver seus gráficos de produtividade e sua ofensiva diária.
+        </p>
+        <div className="mt-6 flex flex-col gap-4 sm:flex-row">
+          <Link
+            href="/login"
+            className="rounded-full bg-[#04D939]/10 px-6 py-2.5 text-sm font-semibold text-[#04D939] hover:bg-[#04D939]/20"
+          >
+            Fazer Login
+          </Link>
+          <Link
+            href="/cadastro"
+            className="rounded-full bg-[#112031] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#1a2c42]"
+          >
+            Criar Conta
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   if (!resumo) {
     return <div className="h-96 animate-pulse rounded-2xl bg-[#112031]" />;
@@ -267,10 +293,8 @@ function DadosContent() {
 
 export default function DadosPage() {
   return (
-    <FocoPagesProvider>
-      <FocoLayout activeTab="dados">
-        <DadosContent />
-      </FocoLayout>
-    </FocoPagesProvider>
+    <FocoLayout activeTab="dados">
+      <DadosContent />
+    </FocoLayout>
   );
 }
