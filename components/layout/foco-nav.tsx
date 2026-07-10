@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Sidebar } from "lucide-react";
+import { Sidebar, LogOut } from "lucide-react";
 
 import { useTimerConfig } from "@/components/providers/timer-config-provider";
 import { ConfigSidebar } from "@/components/foco/config-sidebar";
@@ -12,7 +12,7 @@ type FocoNavProps = {
 };
 
 export function FocoNav({ activeTab }: FocoNavProps) {
-  const { setSidebarAberta } = useTimerConfig();
+  const { sidebarAberta, setSidebarAberta, usuarioLogado } = useTimerConfig();
 
   return (
     <>
@@ -21,7 +21,7 @@ export function FocoNav({ activeTab }: FocoNavProps) {
           type="button"
           aria-label="Abrir configurações de timer"
           onClick={() => setSidebarAberta(true)}
-          className="text-[#04D939] transition-all hover:brightness-110"
+          className={`text-[#04D939] transition-all hover:brightness-110 ${sidebarAberta ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
         >
           <Sidebar size={24} strokeWidth={2} />
         </button>
@@ -59,10 +59,23 @@ export function FocoNav({ activeTab }: FocoNavProps) {
           </Link>
         </div>
 
-        <div className="w-6" />
+        {usuarioLogado ? (
+          <button
+            type="button"
+            aria-label="Sair da conta"
+            onClick={async () => {
+              await fetch("/api/auth/logout", { method: "POST" });
+              window.location.href = "/";
+            }}
+            className="flex items-center gap-2 rounded-full border border-[#BC2F32]/50 bg-[#BC2F32]/10 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-[#ff8a8a] transition-all hover:bg-[#BC2F32] hover:text-white shadow-sm"
+          >
+            <LogOut size={14} />
+            <span className="hidden sm:inline">Sair</span>
+          </button>
+        ) : (
+          <div className="w-6" />
+        )}
       </div>
-
-      <ConfigSidebar />
     </>
   );
 }

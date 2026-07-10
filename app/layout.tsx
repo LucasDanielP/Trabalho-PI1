@@ -16,6 +16,8 @@ export const metadata: Metadata = {
 
 import FrameWrapper from "@/components/FrameWrapper";
 
+import { AppProviders } from "@/components/providers/app-providers";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -28,9 +30,11 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col antialiased">
-        <FrameWrapper>
-          {children}
-        </FrameWrapper>
+        <AppProviders>
+          <FrameWrapper>
+            {children}
+          </FrameWrapper>
+        </AppProviders>
       </body>
     </html>
   );

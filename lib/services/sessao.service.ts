@@ -171,7 +171,6 @@ export async function getResumoDados(
 
   for (const sessao of finalizadas) {
     const config = sessao.configuracao;
-    if (!config) continue;
 
     const { ativo, descanso } = calcularTempos(sessao, config);
     totalMinutosFoco += ativo;
@@ -190,14 +189,23 @@ export async function getResumoDados(
     }
   }
 
-  const dias = [...porDia.keys()].sort();
-  const pontos = dias
-    .filter((d) => new Date(d) >= inicioPeriodo)
-    .map((d) => ({
-      data: new Date(d).toISOString(),
-      ciclos: porDia.get(d)!.ciclos,
-      minutosEstudados: porDia.get(d)!.minutos,
-    }));
+  const dias = [];
+  let atual = new Date(inicioPeriodo);
+  const dataHoje = new Date();
+  while (atual <= dataHoje) {
+    dias.push(new Date(atual));
+    atual.setDate(atual.getDate() + 1);
+  }
+
+  const pontos = dias.map((d) => {
+    const key = d.toDateString();
+    const stats = porDia.get(key) || { ciclos: 0, minutos: 0 };
+    return {
+      data: d.toISOString(),
+      ciclos: stats.ciclos,
+      minutosEstudados: stats.minutos,
+    };
+  });
 
   return {
     ofensivaDias: calcularOfensiva(finalizadas.map((s) => s.inicio)),
