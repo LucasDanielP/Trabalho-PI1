@@ -171,7 +171,6 @@ export async function getResumoDados(
 
   for (const sessao of finalizadas) {
     const config = sessao.configuracao;
-    if (!config) continue;
 
     const { ativo, descanso } = calcularTempos(sessao, config);
     totalMinutosFoco += ativo;

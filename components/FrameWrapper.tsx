@@ -1,10 +1,32 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { CSSProperties, ReactNode } from "react";
+import { CSSProperties, ReactNode, useEffect, useRef, useState } from "react";
+import { useTimerConfig } from "@/components/providers/timer-config-provider";
+import { ConfigSidebar } from "@/components/foco/config-sidebar";
 
 export default function FrameWrapper({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const { sidebarAberta } = useTimerConfig();
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [contentHeight, setContentHeight] = useState<number | "auto">("auto");
+
+  useEffect(() => {
+    if (!contentRef.current) return;
+    
+    // Resize observer para observar mudanças de altura do conteúdo interno
+    const observer = new ResizeObserver(() => {
+      if (contentRef.current) {
+        // scrollHeight mede o tamanho real do conteúdo (mesmo que o pai tente esmagar),
+        // quebrando o loop infinito de encolhimento.
+        setContentHeight(contentRef.current.scrollHeight);
+      }
+    });
+    
+    observer.observe(contentRef.current);
+    
+    return () => observer.disconnect();
+  }, [pathname]);
 
   // Definindo estilos padrão (Home /)
   let glow1Style: CSSProperties = { top: '-20%', left: '-10%', width: '300px', height: '300px', opacity: 0.20 };
@@ -36,37 +58,58 @@ export default function FrameWrapper({ children }: { children: ReactNode }) {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-4 transition-colors duration-700" style={{ backgroundColor: '#132235' }}>
-      
-      {/* Container principal simulando o card da imagem */}
-      <div 
-        className={`relative overflow-hidden w-full ${frameMaxWidth} p-8 sm:p-10 rounded-[2rem] border border-white/5 z-10 flex flex-col transition-all duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]`}
-        style={{ 
-          background: 'linear-gradient(145deg, #162a3f 0%, #101d2d 100%)',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.6)'
-        }}
-      >
-        {/* Mancha verde interna 1 */}
-        <div 
-          className="absolute rounded-full bg-[#04D939] blur-[60px] pointer-events-none transition-all duration-1000 ease-in-out"
-          style={glow1Style}
-        ></div>
+    <main className="min-h-screen flex items-center justify-center p-4 transition-colors duration-700 overflow-hidden" style={{ backgroundColor: '#132235' }}>
+      {/* Container flex para abraçar a sidebar fluida e o card principal */}
+      <div className={`flex w-full max-w-[1300px] justify-center items-stretch gap-6 transition-all duration-[400ms] ease-out`}>
+        {(pathname === '/timer' || pathname === '/logs' || pathname === '/dados') && (
+          <div 
+            className="transition-all duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)] shrink-0"
+            style={{
+               width: sidebarAberta ? '280px' : '0px',
+               opacity: sidebarAberta ? 1 : 0,
+               transform: sidebarAberta ? 'translateX(0) scale(1)' : 'translateX(-40px) scale(0.95)',
+               pointerEvents: sidebarAberta ? 'auto' : 'none'
+            }}
+          >
+            <div className="w-[280px] flex h-full">
+              <ConfigSidebar />
+            </div>
+          </div>
+        )}
 
-        {/* Mancha verde interna 2 */}
+        {/* Container principal simulando o card da imagem */}
         <div 
-          className="absolute rounded-full bg-[#04D939] blur-[70px] pointer-events-none transition-all duration-1000 ease-in-out"
-          style={glow2Style}
-        ></div>
+          className={`relative overflow-hidden w-full ${frameMaxWidth} rounded-[2rem] border border-white/5 z-10 flex flex-col transition-[height] duration-[400ms] ease-out`}
+          style={{ 
+            background: 'linear-gradient(145deg, #162a3f 0%, #101d2d 100%)',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.6)',
+            height: contentHeight === "auto" ? "auto" : `${contentHeight}px`
+          }}
+        >
+          {/* Mancha verde interna 1 */}
+          <div 
+            className="absolute rounded-full bg-[#04D939] blur-[60px] pointer-events-none transition-all duration-1000 ease-in-out"
+            style={glow1Style}
+          ></div>
 
-        {/* Mancha verde interna 3 */}
-        <div 
-          className="absolute rounded-full bg-[#04D939] blur-[60px] pointer-events-none transition-all duration-1000 ease-in-out"
-          style={glow3Style}
-        ></div>
+          {/* Mancha verde interna 2 */}
+          <div 
+            className="absolute rounded-full bg-[#04D939] blur-[70px] pointer-events-none transition-all duration-1000 ease-in-out"
+            style={glow2Style}
+          ></div>
 
-        {/* Inner Content com leve transição de entrada */}
-        <div className="relative z-10 w-full animate-in fade-in zoom-in-95 duration-500">
-          {children}
+          {/* Mancha verde interna 3 */}
+          <div 
+            className="absolute rounded-full bg-[#04D939] blur-[60px] pointer-events-none transition-all duration-1000 ease-in-out"
+            style={glow3Style}
+          ></div>
+
+          <div ref={contentRef} className="relative z-10 w-full shrink-0 flex flex-col p-6 sm:p-8 md:p-10 min-h-[500px]">
+            {/* Inner Content com leve transição de entrada */}
+            <div key={pathname} className="w-full flex-1 flex flex-col animate-in fade-in zoom-in-[0.98] duration-[400ms] ease-out">
+              {children}
+            </div>
+          </div>
         </div>
       </div>
     </main>

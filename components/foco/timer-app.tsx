@@ -60,11 +60,13 @@ export function TimerApp() {
         onSkip={handleSkip}
       />
 
-      <PauseConfirmModal
-        aberto={confirmacaoPausaAberta}
-        onConfirmar={handleConfirmarPausa}
-        onVoltar={handleCancelarPausa}
-      />
+      <div className="pb-8">
+        <PauseConfirmModal
+          aberto={confirmacaoPausaAberta}
+          onConfirmar={handleConfirmarPausa}
+          onVoltar={handleCancelarPausa}
+        />
+      </div>
     </div>
   );
 }

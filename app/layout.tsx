@@ -30,11 +30,11 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col antialiased">
-        <FrameWrapper>
-          <AppProviders>
+        <AppProviders>
+          <FrameWrapper>
             {children}
-          </AppProviders>
-        </FrameWrapper>
+          </FrameWrapper>
+        </AppProviders>
       </body>
     </html>
   );

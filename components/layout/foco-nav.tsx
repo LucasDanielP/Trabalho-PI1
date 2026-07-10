@@ -12,7 +12,7 @@ type FocoNavProps = {
 };
 
 export function FocoNav({ activeTab }: FocoNavProps) {
-  const { setSidebarAberta } = useTimerConfig();
+  const { sidebarAberta, setSidebarAberta } = useTimerConfig();
 
   return (
     <>
@@ -21,7 +21,7 @@ export function FocoNav({ activeTab }: FocoNavProps) {
           type="button"
           aria-label="Abrir configurações de timer"
           onClick={() => setSidebarAberta(true)}
-          className="text-[#04D939] transition-all hover:brightness-110"
+          className={`text-[#04D939] transition-all hover:brightness-110 ${sidebarAberta ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
         >
           <Sidebar size={24} strokeWidth={2} />
         </button>
@@ -61,8 +61,6 @@ export function FocoNav({ activeTab }: FocoNavProps) {
 
         <div className="w-6" />
       </div>
-
-      <ConfigSidebar />
     </>
   );
 }

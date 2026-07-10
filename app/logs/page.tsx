@@ -123,60 +123,48 @@ function LogsContent() {
         return (
           <article
             key={dia.data.toDateString()}
-            className="grid gap-6 rounded-2xl border border-white/5 bg-[#0d1826]/80 p-5 md:grid-cols-[120px_1fr_100px] md:items-center"
+            className="relative overflow-hidden rounded-[1.5rem] border border-white/5 bg-[#0d1826] p-6 md:px-10 grid gap-8 md:grid-cols-[auto_1fr_auto] md:items-center shadow-lg"
           >
-            <div className="flex flex-col items-center gap-2 text-center">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8fa8c4]">
-                Ciclos totais
-              </p>
-              <div className="flex size-20 items-center justify-center rounded-full border-2 border-[#04D939] text-3xl font-bold text-white">
+            {/* Ciclos */}
+            <div className="relative z-10 flex flex-col items-center gap-2 text-center md:pr-6 md:border-r md:border-white/5">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-[#8fa8c4]">Ciclos</p>
+              <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-[#04D939]/20 to-[#04D939]/5 border border-[#04D939]/30 text-2xl font-bold text-[#04D939] shadow-[0_0_15px_rgba(4,217,57,0.15)]">
                 {dia.ciclosCompletos}
               </div>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            {/* Tempos e Sessões */}
+            <div className="relative z-10 grid gap-6 sm:grid-cols-2">
               <div className="space-y-3">
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8fa8c4]">
-                    Sessões no dia:
-                  </p>
-                  <p className="text-sm font-semibold text-white">
-                    {dia.sessoes} {dia.sessoes === 1 ? "sessão" : "sessões"}
-                  </p>
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-[#8fa8c4]">Desempenho</p>
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-4 text-sm">
+                    <span className="text-[#8fa8c4] w-12">Foco:</span>
+                    <span className="font-semibold text-white">{formatDuration(dia.minutosFoco)}</span>
+                  </div>
+                  <div className="flex items-center gap-4 text-sm">
+                    <span className="text-[#8fa8c4] w-12">Pausa:</span>
+                    <span className="font-semibold text-white">{formatDuration(dia.minutosDescanso)}</span>
+                  </div>
                 </div>
               </div>
-
+              
               <div className="space-y-3">
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8fa8c4]">
-                    Tempo ativo:
-                  </p>
-                  <p className="text-sm font-semibold text-white">
-                    {formatDuration(dia.minutosFoco)}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8fa8c4]">
-                    Tempo descanso:
-                  </p>
-                  <p className="text-sm font-semibold text-white">
-                    {formatDuration(dia.minutosDescanso)}
-                  </p>
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-[#8fa8c4]">Sessões no dia</p>
+                <div className="mt-1 text-2xl font-bold text-white flex items-baseline gap-2">
+                  {dia.sessoes} <span className="text-sm font-medium text-[#8fa8c4]">{dia.sessoes === 1 ? "sessão" : "sessões"}</span>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center justify-center md:justify-end">
-              <div className="text-center md:text-right">
-                <p className="text-4xl font-bold leading-none text-white">
-                  {dia.data.toLocaleDateString("pt-BR", { day: "2-digit" })}
-                </p>
-                <p className="mt-1 text-xs font-semibold tracking-[0.2em] text-[#8fa8c4]">
-                  {dia.data
-                    .toLocaleDateString("pt-BR", { month: "long" })
-                    .toUpperCase()}
-                </p>
-              </div>
+            {/* Data */}
+            <div className="relative z-10 flex flex-col items-center justify-center md:items-end md:pl-8 md:border-l md:border-white/5">
+              <p className="text-5xl font-black text-white tracking-tighter drop-shadow-md">
+                {dia.data.toLocaleDateString("pt-BR", { day: "2-digit" })}
+              </p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#8fa8c4] mt-1">
+                {dia.data.toLocaleDateString("pt-BR", { month: "short" }).replace('.', '')} {dia.data.getFullYear()}
+              </p>
             </div>
           </article>
         );

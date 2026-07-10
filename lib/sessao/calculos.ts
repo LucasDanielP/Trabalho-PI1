@@ -28,18 +28,26 @@ export function calcularTempos(
   config?: Pick<
     ConfiguracaoTimer,
     "duracaoFocoMin" | "duracaoPausaCurtaMin" | "duracaoPausaLongaMin" | "ciclosAtePausaLonga"
-  >,
+  > | null,
 ) {
-  if (!config || sessao.ciclosCompletos === 0) {
+  if (sessao.ciclosCompletos === 0) {
     return { ativo: 0, descanso: 0 };
   }
 
-  const ativo = sessao.ciclosCompletos * config.duracaoFocoMin;
+  // Fallback caso o timer tenha sido apagado
+  const safeConfig = config || {
+    duracaoFocoMin: 25,
+    duracaoPausaCurtaMin: 5,
+    duracaoPausaLongaMin: 15,
+    ciclosAtePausaLonga: 4,
+  };
+
+  const ativo = sessao.ciclosCompletos * safeConfig.duracaoFocoMin;
   const pausasCurtas = Math.max(0, sessao.ciclosCompletos - 1);
   const descanso =
-    pausasCurtas * config.duracaoPausaCurtaMin +
-    Math.floor(sessao.ciclosCompletos / config.ciclosAtePausaLonga) *
-      config.duracaoPausaLongaMin;
+    pausasCurtas * safeConfig.duracaoPausaCurtaMin +
+    Math.floor(sessao.ciclosCompletos / safeConfig.ciclosAtePausaLonga) *
+      safeConfig.duracaoPausaLongaMin;
 
   return { ativo, descanso };
 }

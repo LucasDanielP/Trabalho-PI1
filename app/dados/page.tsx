@@ -40,7 +40,6 @@ function buildGuestResumo(
 
   for (const s of finalizadas) {
     const config = s.configuracao;
-    if (!config) continue;
     const { ativo, descanso } = calcularTempos(s, config);
     totalMinutosFoco += ativo;
     totalCiclos += s.ciclosCompletos;
@@ -133,40 +132,41 @@ function DadosContent() {
     <div className="flex flex-col gap-4">
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="flex flex-col gap-4">
-          <section className="rounded-2xl border border-white/5 bg-[#0d1826]/80 p-5">
-            <div className="flex items-center gap-4">
-              <div className="flex size-16 items-center justify-center rounded-full border border-[#04D939]/30 bg-[#04D939]/10 shadow-[0_0_24px_rgba(4,217,57,0.2)]">
+          <section className="relative overflow-hidden rounded-[1.5rem] border border-white/5 bg-[#0d1826] p-5 shadow-lg">
+            <div className="absolute inset-0 bg-gradient-to-r from-[#04D939]/0 via-[#04D939]/5 to-[#04D939]/0 opacity-0 transition-opacity hover:opacity-100 pointer-events-none" />
+            <div className="relative z-10 flex items-center gap-4">
+              <div className="flex size-14 items-center justify-center rounded-full border border-[#04D939]/30 bg-[#04D939]/10 shadow-[0_0_24px_rgba(4,217,57,0.2)]">
                 <Flame className="size-8 text-[#04D939]" />
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-white">Ofensiva atual</h2>
-                <p className="text-sm text-[#8fa8c4]">
-                  Série atual: {resumo.ofensivaDias} {resumo.ofensivaDias === 1 ? "Dia" : "Dias"}
+                <h2 className="text-xl font-bold text-white tracking-tight">Ofensiva atual</h2>
+                <p className="mt-1 text-sm font-medium text-[#8fa8c4]">
+                  Série atual: <span className="text-[#04D939] font-bold">{resumo.ofensivaDias}</span> {resumo.ofensivaDias === 1 ? "Dia" : "Dias"}
                 </p>
               </div>
             </div>
           </section>
 
-          <section className="rounded-2xl border border-white/5 bg-[#0d1826]/80 p-5">
-            <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8fa8c4]">
+          <section className="relative overflow-hidden rounded-[1.5rem] border border-white/5 bg-[#0d1826] p-5 shadow-lg">
+            <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-widest text-[#8fa8c4]">
               Histórico
             </h2>
             <ul className="space-y-4">
               <li className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <Timer className="size-4 text-[#04D939]" />
-                  <span className="text-sm text-[#8fa8c4]">Total Tempo em Foco:</span>
+                  <span className="text-sm font-medium text-[#8fa8c4]">Tempo em Foco:</span>
                 </div>
-                <span className="text-sm font-semibold text-white">
-                  {resumo.totalMinutosFoco}
+                <span className="text-base font-bold text-white whitespace-nowrap">
+                  {resumo.totalMinutosFoco} min
                 </span>
               </li>
               <li className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <RotateCcw className="size-4 text-[#04D939]" />
-                  <span className="text-sm text-[#8fa8c4]">Total de Ciclos:</span>
+                  <span className="text-sm font-medium text-[#8fa8c4]">Ciclos Concluídos:</span>
                 </div>
-                <span className="text-sm font-semibold text-white">
+                <span className="text-base font-bold text-white">
                   {resumo.totalCiclos}
                 </span>
               </li>
@@ -174,39 +174,39 @@ function DadosContent() {
           </section>
         </div>
 
-        <section className="rounded-2xl border border-white/5 bg-[#0d1826]/80 p-5">
-          <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8fa8c4]">
-            Hoje em Detalhes
-          </h2>
-          <ul className="divide-y divide-white/5">
-            <li className="flex items-center justify-between py-4">
-              <div className="flex items-center gap-3">
-                <Timer className="size-4 text-[#04D939]" />
-                <span className="text-sm text-[#8fa8c4]">Minutos trabalhados Hoje:</span>
-              </div>
-              <span className="text-sm font-semibold text-white">{resumo.hojeMinutosFoco}</span>
-            </li>
-            <li className="flex items-center justify-between py-4">
-              <div className="flex items-center gap-3">
-                <RotateCcw className="size-4 text-[#04D939]" />
-                <span className="text-sm text-[#8fa8c4]">Ciclos Hoje:</span>
-              </div>
-              <span className="text-sm font-semibold text-white">{resumo.hojeCiclos}</span>
-            </li>
-            <li className="flex items-center justify-between py-4">
-              <div className="flex items-center gap-3">
-                <Coffee className="size-4 text-[#04D939]" />
-                <span className="text-sm text-[#8fa8c4]">Minutos Descansados:</span>
-              </div>
-              <span className="text-sm font-semibold text-white">
-                {resumo.hojeMinutosDescanso}
-              </span>
-            </li>
-          </ul>
-        </section>
+        <section className="relative overflow-hidden rounded-[1.5rem] border border-white/5 bg-[#0d1826] p-5 shadow-lg">
+            <h2 className="mb-4 text-[11px] font-semibold uppercase tracking-widest text-[#8fa8c4]">
+              Hoje em Detalhes
+            </h2>
+            <ul className="divide-y divide-white/5">
+              <li className="flex items-center justify-between py-4 gap-2">
+                <div className="flex items-center gap-3">
+                  <Timer className="size-4 text-[#04D939] shrink-0" />
+                  <span className="text-sm font-medium text-[#8fa8c4] leading-tight">Foco Hoje:</span>
+                </div>
+                <span className="text-base font-bold text-white whitespace-nowrap">{resumo.hojeMinutosFoco} min</span>
+              </li>
+              <li className="flex items-center justify-between py-4 gap-2">
+                <div className="flex items-center gap-3">
+                  <RotateCcw className="size-4 text-[#04D939] shrink-0" />
+                  <span className="text-sm font-medium text-[#8fa8c4] leading-tight">Ciclos Hoje:</span>
+                </div>
+                <span className="text-base font-bold text-white whitespace-nowrap">{resumo.hojeCiclos}</span>
+              </li>
+              <li className="flex items-center justify-between pt-4 gap-2">
+                <div className="flex items-center gap-3">
+                  <Coffee className="size-4 text-[#04D939] shrink-0" />
+                  <span className="text-sm font-medium text-[#8fa8c4] leading-tight">Descanso:</span>
+                </div>
+                <span className="text-base font-bold text-white whitespace-nowrap">
+                  {resumo.hojeMinutosDescanso} min
+                </span>
+              </li>
+            </ul>
+          </section>
       </div>
 
-      <section className="rounded-2xl border border-white/5 bg-[#0d1826]/80 p-5">
+      <section className="relative overflow-hidden rounded-[1.5rem] border border-white/5 bg-[#0d1826] p-5 shadow-lg mt-2">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <h2 className="text-lg font-semibold text-white">Análise de Produtividade</h2>
           <div className="flex rounded-full bg-[#112031] p-1">
@@ -287,6 +287,7 @@ function DadosContent() {
           </div>
         </div>
       </section>
+      <div className="h-8" />
     </div>
   );
 }
