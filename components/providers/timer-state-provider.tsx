@@ -76,34 +76,34 @@ export function TimerStateProvider({ children }: { children: ReactNode }) {
     setEstado(criarEstadoInicial(configAtiva));
     setSessaoId(null);
     setSessaoGuest(null);
-
-    async function iniciarSessao() {
-      if (usuarioLogado) {
-        const res = await fetch("/api/sessoes", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ configuracaoId: configAtiva!.id }),
-        });
-        if (res.ok) {
-          const sessao = (await res.json()) as SessaoEstudo;
-          setSessaoId(sessao.id);
-        }
-      } else {
-        const guest = createGuestSessao(configAtiva!.id, {
-          id: configAtiva!.id,
-          nome: configAtiva!.nome,
-          duracaoFocoMin: configAtiva!.duracaoFocoMin,
-          duracaoPausaCurtaMin: configAtiva!.duracaoPausaCurtaMin,
-          duracaoPausaLongaMin: configAtiva!.duracaoPausaLongaMin,
-          ciclosAtePausaLonga: configAtiva!.ciclosAtePausaLonga,
-        });
-        setSessaoGuest(guest);
-        saveGuestSessao(guest);
-      }
-    }
-
-    iniciarSessao();
   }, [configAtiva, carregando, usuarioLogado, loadedConfigId, estado]);
+
+  async function iniciarSessaoIfNeeded() {
+    if (sessaoId || sessaoGuest || !configAtiva) return;
+
+    if (usuarioLogado) {
+      const res = await fetch("/api/sessoes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ configuracaoId: configAtiva.id }),
+      });
+      if (res.ok) {
+        const sessao = (await res.json()) as SessaoEstudo;
+        setSessaoId(sessao.id);
+      }
+    } else {
+      const guest = createGuestSessao(configAtiva.id, {
+        id: configAtiva.id,
+        nome: configAtiva.nome,
+        duracaoFocoMin: configAtiva.duracaoFocoMin,
+        duracaoPausaCurtaMin: configAtiva.duracaoPausaCurtaMin,
+        duracaoPausaLongaMin: configAtiva.duracaoPausaLongaMin,
+        ciclosAtePausaLonga: configAtiva.ciclosAtePausaLonga,
+      });
+      setSessaoGuest(guest);
+      saveGuestSessao(guest);
+    }
+  }
 
   useEffect(() => {
     if (!estado || estado.pausado || !configAtiva) return;
@@ -145,12 +145,14 @@ export function TimerStateProvider({ children }: { children: ReactNode }) {
     setConfirmacaoPausaAberta(false);
   }
 
-  function handleResume() {
+  async function handleResume() {
+    await iniciarSessaoIfNeeded();
     setEstado((prev) => (prev ? { ...prev, pausado: false } : prev));
   }
 
-  function handleSkip() {
+  async function handleSkip() {
     if (!configAtiva || !estado) return;
+    await iniciarSessaoIfNeeded();
     const proximo = avancarFase(estado, configAtiva);
     setEstado(proximo);
     persistirSessao(proximo);
