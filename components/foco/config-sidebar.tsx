@@ -144,6 +144,7 @@ export function ConfigSidebar() {
           </div>
         </div>
 
+
         {!usuarioLogado && (
           <p className="mt-2 text-center text-xs text-[#8fa8c4] opacity-80">
             <Link href="/login" className="text-[#04D939] hover:underline">Faça login</Link> para criar novos.

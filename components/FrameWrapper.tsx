@@ -28,32 +28,53 @@ export default function FrameWrapper({ children }: { children: ReactNode }) {
     return () => observer.disconnect();
   }, [pathname]);
 
+  const [blobPositions, setBlobPositions] = useState<{t: string, l: string}[]>([
+    { t: '-20%', l: '-10%' },
+    { t: '110%', l: '110%' },
+    { t: '50%', l: '50%' }
+  ]);
+
+  useEffect(() => {
+    // Definimos 4 regiões seguras (quadrantes) para evitar que as manchas se colem
+    const quadrants = [
+      { tMin: 5, tMax: 35, lMin: 5, lMax: 35 },     // Top-Left
+      { tMin: 65, tMax: 95, lMin: 65, lMax: 95 },   // Bottom-Right
+      { tMin: 65, tMax: 95, lMin: 5, lMax: 35 },    // Bottom-Left
+      { tMin: 5, tMax: 35, lMin: 65, lMax: 95 },    // Top-Right
+    ];
+    
+    // Embaralha os quadrantes
+    quadrants.sort(() => Math.random() - 0.5);
+    
+    const randomPercent = (min: number, max: number) => `${Math.floor(Math.random() * (max - min + 1)) + min}%`;
+    
+    setBlobPositions([
+      { t: randomPercent(quadrants[0].tMin, quadrants[0].tMax), l: randomPercent(quadrants[0].lMin, quadrants[0].lMax) },
+      { t: randomPercent(quadrants[1].tMin, quadrants[1].tMax), l: randomPercent(quadrants[1].lMin, quadrants[1].lMax) },
+      { t: randomPercent(quadrants[2].tMin, quadrants[2].tMax), l: randomPercent(quadrants[2].lMin, quadrants[2].lMax) },
+    ]);
+  }, [pathname]);
+
   // Definindo estilos padrão (Home /)
-  let glow1Style: CSSProperties = { top: '-20%', left: '-10%', width: '300px', height: '300px', opacity: 0.20 };
-  let glow2Style: CSSProperties = { top: '70%', left: '70%', width: '250px', height: '250px', opacity: 0.18 };
-  let glow3Style: CSSProperties = { top: '50%', left: '50%', width: '0px', height: '0px', opacity: 0 };
+  let glow1Style: CSSProperties = { top: blobPositions[0].t, left: blobPositions[0].l, width: '300px', height: '300px', opacity: 0.20, transform: 'translate(-50%, -50%)' };
+  let glow2Style: CSSProperties = { top: blobPositions[1].t, left: blobPositions[1].l, width: '250px', height: '250px', opacity: 0.18, transform: 'translate(-50%, -50%)' };
+  let glow3Style: CSSProperties = { top: blobPositions[2].t, left: blobPositions[2].l, width: '0px', height: '0px', opacity: 0, transform: 'translate(-50%, -50%)' };
   let frameMaxWidth = 'max-w-md';
 
-  if (pathname === '/cadastro') {
-    glow1Style = { top: '-20%', left: '60%', width: '300px', height: '300px', opacity: 0.20 };
-    glow2Style = { top: '70%', left: '-10%', width: '250px', height: '250px', opacity: 0.18 };
-    glow3Style = { top: '50%', left: '50%', width: '0px', height: '0px', opacity: 0 };
-    frameMaxWidth = 'max-w-md';
-  } else if (pathname === '/login') {
-    glow1Style = { top: '10%', left: '10%', width: '350px', height: '350px', opacity: 0.16 };
-    glow2Style = { top: '30%', left: '20%', width: '250px', height: '250px', opacity: 0.16 };
-    glow3Style = { top: '50%', left: '50%', width: '0px', height: '0px', opacity: 0 };
+  if (pathname === '/cadastro' || pathname === '/login') {
+    glow1Style = { top: blobPositions[0].t, left: blobPositions[0].l, width: '400px', height: '400px', opacity: 0.15, transform: 'translate(-50%, -50%)' };
+    glow2Style = { top: blobPositions[1].t, left: blobPositions[1].l, width: '350px', height: '350px', opacity: 0.15, transform: 'translate(-50%, -50%)' };
+    glow3Style = { top: blobPositions[2].t, left: blobPositions[2].l, width: '0px', height: '0px', opacity: 0, transform: 'translate(-50%, -50%)' };
     frameMaxWidth = 'max-w-md';
   } else if (pathname === '/timer' || pathname === '/logs' || pathname === '/dados') {
-    // Menores, espalhadas e não centralizadas (uma na esquerda alta, uma na direita baixa, uma no centro inferior)
-    glow1Style = { top: '20%', left: '20%', width: '350px', height: '350px', opacity: 0.10, transform: 'translate(-50%, -50%)' };
-    glow2Style = { top: '80%', left: '75%', width: '300px', height: '300px', opacity: 0.08, transform: 'translate(-50%, -50%)' };
-    glow3Style = { top: '60%', left: '30%', width: '250px', height: '250px', opacity: 0.07, transform: 'translate(-50%, -50%)' };
-    frameMaxWidth = 'max-w-4xl min-h-[500px] justify-between'; // Ampliado para max-w-4xl a pedido do usuário
+    glow1Style = { top: blobPositions[0].t, left: blobPositions[0].l, width: '400px', height: '400px', opacity: 0.15, transform: 'translate(-50%, -50%)' };
+    glow2Style = { top: blobPositions[1].t, left: blobPositions[1].l, width: '500px', height: '500px', opacity: 0.1, transform: 'translate(-50%, -50%)' };
+    glow3Style = { top: blobPositions[2].t, left: blobPositions[2].l, width: '300px', height: '300px', opacity: 0.12, transform: 'translate(-50%, -50%)' };
+    frameMaxWidth = 'max-w-4xl min-h-[500px] justify-between';
   } else if (pathname.startsWith('/usuarios')) {
-    glow1Style = { top: '-20%', left: '60%', width: '300px', height: '300px', opacity: 0.20 };
-    glow2Style = { top: '70%', left: '-10%', width: '250px', height: '250px', opacity: 0.18 };
-    glow3Style = { top: '50%', left: '50%', width: '0px', height: '0px', opacity: 0 };
+    glow1Style = { top: blobPositions[0].t, left: blobPositions[0].l, width: '300px', height: '300px', opacity: 0.20, transform: 'translate(-50%, -50%)' };
+    glow2Style = { top: blobPositions[1].t, left: blobPositions[1].l, width: '250px', height: '250px', opacity: 0.18, transform: 'translate(-50%, -50%)' };
+    glow3Style = { top: blobPositions[2].t, left: blobPositions[2].l, width: '0px', height: '0px', opacity: 0, transform: 'translate(-50%, -50%)' };
     frameMaxWidth = 'max-w-3xl';
   }
 
@@ -104,7 +125,7 @@ export default function FrameWrapper({ children }: { children: ReactNode }) {
             style={glow3Style}
           ></div>
 
-          <div ref={contentRef} className="relative z-10 w-full shrink-0 flex flex-col p-6 sm:p-8 md:p-10 min-h-[500px]">
+          <div ref={contentRef} className="relative z-10 w-full shrink-0 flex flex-col p-6 sm:p-8 md:p-10">
             {/* Inner Content com leve transição de entrada */}
             <div key={pathname} className="w-full flex-1 flex flex-col animate-in fade-in zoom-in-[0.98] duration-[400ms] ease-out">
               {children}

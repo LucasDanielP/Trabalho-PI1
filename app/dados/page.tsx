@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import {
   Coffee,
@@ -8,6 +8,7 @@ import {
   RotateCcw,
   Timer,
 } from "lucide-react";
+import { AreaChart, Area, BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 
 import { FocoLayout } from "@/components/layout/foco-nav";
 import { calcularOfensiva, calcularTempos } from "@/lib/sessao/calculos";
@@ -96,6 +97,34 @@ function DadosContent() {
     load();
   }, [activePeriod]);
 
+  const chartData = useMemo(() => {
+    if (!resumo) return [];
+    
+    let baseData = resumo.graficoMinutos.map((p, i) => ({
+      data: p.data,
+      minutosEstudados: p.minutosEstudados,
+      ciclos: resumo.graficoCiclos[i]?.ciclos || 0
+    }));
+
+    if (activePeriod === "Ano") {
+      const map = new Map<string, { data: string, minutosEstudados: number, ciclos: number }>();
+      baseData.forEach(p => {
+        const d = new Date(p.data);
+        const month = d.getMonth();
+        const year = d.getFullYear();
+        const key = `${year}-${month}`;
+        
+        const existing = map.get(key) || { data: new Date(year, month, 1).toISOString(), minutosEstudados: 0, ciclos: 0 };
+        existing.minutosEstudados += p.minutosEstudados;
+        existing.ciclos += p.ciclos;
+        map.set(key, existing);
+      });
+      return Array.from(map.values()).sort((a, b) => new Date(a.data).getTime() - new Date(b.data).getTime());
+    }
+
+    return baseData;
+  }, [resumo, activePeriod]);
+
   if (isGuest) {
     return (
       <div className="flex h-96 flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 p-12 text-center">
@@ -125,8 +154,8 @@ function DadosContent() {
     return <div className="h-96 animate-pulse rounded-2xl bg-[#112031]" />;
   }
 
-  const maxMin = Math.max(...resumo.graficoMinutos.map((p) => p.minutosEstudados), 1);
-  const maxCic = Math.max(...resumo.graficoCiclos.map((p) => p.ciclos), 1);
+  const maxMin = Math.max(...chartData.map((p) => p.minutosEstudados), 1);
+  const maxCic = Math.max(...chartData.map((p) => p.ciclos), 1);
 
   return (
     <div className="flex flex-col gap-4">
@@ -232,27 +261,55 @@ function DadosContent() {
             <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8fa8c4]">
               Minutos
             </p>
-            <div className="flex h-44 items-end justify-between gap-2">
-              {resumo.graficoMinutos.length === 0 ? (
-                <p className="w-full text-center text-xs text-[#8fa8c4]">Sem dados ainda</p>
+            <div className="h-44 w-full mt-4">
+              {chartData.length === 0 ? (
+                <p className="flex h-full items-center justify-center text-xs text-[#8fa8c4]">Sem dados ainda</p>
               ) : (
-                resumo.graficoMinutos.map((p) => {
-                  const d = new Date(p.data);
-                  return (
-                    <div key={p.data} className="flex flex-1 flex-col items-center gap-2">
-                      <div
-                        className="w-full rounded-t-lg bg-linear-to-t from-[#04D939]/20 to-[#04D939]"
-                        style={{
-                          height: `${(p.minutosEstudados / maxMin) * 100}%`,
-                          minHeight: p.minutosEstudados > 0 ? "8px" : "2px",
-                        }}
-                      />
-                      <span className="text-[10px] uppercase text-[#8fa8c4]">
-                        {weekDays[d.getDay()]}
-                      </span>
-                    </div>
-                  );
-                })
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={chartData} margin={{ top: 5, right: 0, left: 0, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="colorMinutos" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#04D939" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#04D939" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <XAxis 
+                      dataKey="data" 
+                      tickFormatter={(data) => {
+                        const d = new Date(data);
+                        if (activePeriod === "Semana") return weekDays[d.getDay()];
+                        if (activePeriod === "Mês") return d.getDate().toString().padStart(2, '0');
+                        const months = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+                        return months[d.getMonth()];
+                      }}
+                      stroke="#8fa8c4"
+                      fontSize={10}
+                      tickLine={false}
+                      axisLine={false}
+                      tickMargin={10}
+                      minTickGap={activePeriod === "Mês" ? 15 : 5}
+                    />
+                    <Tooltip 
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          return (
+                            <div className="rounded-lg border border-white/10 bg-[#112031] p-3 shadow-xl">
+                              <p className="text-xs font-semibold text-[#8fa8c4] mb-1 uppercase tracking-wider">
+                                {activePeriod === "Ano" 
+                                  ? new Date(payload[0].payload.data).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }) 
+                                  : new Date(payload[0].payload.data).toLocaleDateString('pt-BR')}
+                              </p>
+                              <p className="text-sm font-bold text-white"><span className="text-[#04D939] text-base">{payload[0].value}</span> min em foco</p>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                      cursor={{ stroke: '#04D939', strokeWidth: 1, strokeDasharray: '4 4', fill: 'transparent' }}
+                    />
+                    <Area type="monotone" dataKey="minutosEstudados" stroke="#04D939" strokeWidth={3} fillOpacity={1} fill="url(#colorMinutos)" />
+                  </AreaChart>
+                </ResponsiveContainer>
               )}
             </div>
           </div>
@@ -261,27 +318,49 @@ function DadosContent() {
             <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8fa8c4]">
               Ciclos
             </p>
-            <div className="flex h-44 items-end justify-between gap-2">
-              {resumo.graficoCiclos.length === 0 ? (
-                <p className="w-full text-center text-xs text-[#8fa8c4]">Sem dados ainda</p>
+            <div className="h-44 w-full mt-4">
+              {chartData.length === 0 ? (
+                <p className="flex h-full items-center justify-center text-xs text-[#8fa8c4]">Sem dados ainda</p>
               ) : (
-                resumo.graficoCiclos.map((p) => {
-                  const d = new Date(p.data);
-                  return (
-                    <div key={p.data} className="flex flex-1 flex-col items-center gap-2">
-                      <div
-                        className="w-full rounded-t-full bg-linear-to-t from-[#04D939]/30 to-[#04D939]"
-                        style={{
-                          height: `${(p.ciclos / maxCic) * 100}%`,
-                          minHeight: p.ciclos > 0 ? "8px" : "2px",
-                        }}
-                      />
-                      <span className="text-[10px] uppercase text-[#8fa8c4]">
-                        {weekDays[d.getDay()]}
-                      </span>
-                    </div>
-                  );
-                })
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={chartData} margin={{ top: 5, right: 0, left: 0, bottom: 0 }} barSize={32}>
+                    <XAxis 
+                      dataKey="data" 
+                      tickFormatter={(data) => {
+                        const d = new Date(data);
+                        if (activePeriod === "Semana") return weekDays[d.getDay()];
+                        if (activePeriod === "Mês") return d.getDate().toString().padStart(2, '0');
+                        const months = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+                        return months[d.getMonth()];
+                      }}
+                      stroke="#8fa8c4"
+                      fontSize={10}
+                      tickLine={false}
+                      axisLine={false}
+                      tickMargin={10}
+                      minTickGap={activePeriod === "Mês" ? 15 : 5}
+                    />
+                    <Tooltip 
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          return (
+                            <div className="rounded-lg border border-white/10 bg-[#112031] p-3 shadow-xl">
+                              <p className="text-xs font-semibold text-[#8fa8c4] mb-1 uppercase tracking-wider">
+                                {activePeriod === "Ano" 
+                                  ? new Date(payload[0].payload.data).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }) 
+                                  : new Date(payload[0].payload.data).toLocaleDateString('pt-BR')}
+                              </p>
+                              <p className="text-sm font-bold text-white"><span className="text-[#04D939] text-base">{payload[0].value}</span> ciclos completos</p>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                      cursor={{ fill: '#04D939', opacity: 0.1 }}
+                    />
+                    <Bar dataKey="ciclos" fill="#04D939" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
               )}
             </div>
           </div>

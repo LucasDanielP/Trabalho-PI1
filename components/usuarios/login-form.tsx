@@ -40,8 +40,7 @@ export function LoginForm({ redirectTo = "/timer" }: LoginFormProps) {
         return;
       }
 
-      router.push(redirectTo);
-      router.refresh();
+      window.location.href = redirectTo;
     } catch {
       setError("Erro de conexão. Tente novamente.");
     } finally {

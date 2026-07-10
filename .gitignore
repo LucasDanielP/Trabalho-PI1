@@ -48,3 +48,8 @@ next-env.d.ts
 ds
 
 /lib/generated/prisma
+
+# scripts de mock/seed
+seed-*.ts
+seed-*.js
+seed-*.cjs

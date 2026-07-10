@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center text-center">
       <h1 className="text-4xl font-bold text-white tracking-widest mb-2">work & rest</h1>
-      <h2 className="text-[#04D939] text-lg font-medium mb-12">Seja bem-vindo!</h2>
+      <h2 className="text-[#04D939] text-lg font-medium mb-8">Seja bem-vindo!</h2>
       
       <div className="flex flex-col gap-5 w-full">
         
@@ -26,14 +26,6 @@ export default function Home() {
           COMEÇAR SEM CONTA
         </Link>
 
-        {/* Botão Terciário (Outline) para Logs */}
-        <Link 
-          href="/logs"
-          className="w-full border border-slate-500 text-slate-400 bg-slate-500/5 hover:bg-slate-400 hover:text-[#012340] rounded-full py-4 font-bold tracking-wide transition-all duration-300 flex items-center justify-center gap-2 mt-2"
-        >
-          <ScrollText size={18} />
-          VER HISTÓRICO (LOGS)
-        </Link>
       </div>
     </div>
   );
