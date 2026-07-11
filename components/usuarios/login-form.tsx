@@ -82,14 +82,7 @@ export function LoginForm({ redirectTo = "/timer" }: LoginFormProps) {
             required
           />
         </div>
-        <div className="mt-1 flex justify-end">
-          <Link
-            href="#"
-            className="text-xs text-gray-400 transition-colors hover:text-[#04D939]"
-          >
-            Esqueceu a senha?
-          </Link>
-        </div>
+        
       </div>
 
       {error ? (
