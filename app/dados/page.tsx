@@ -266,7 +266,7 @@ function DadosContent() {
                 <p className="flex h-full items-center justify-center text-xs text-[#8fa8c4]">Sem dados ainda</p>
               ) : (
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={chartData} margin={{ top: 5, right: 0, left: 0, bottom: 0 }}>
+                  <AreaChart data={chartData} margin={{ top: 5, right: 15, left: 15, bottom: 0 }}>
                     <defs>
                       <linearGradient id="colorMinutos" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="#04D939" stopOpacity={0.3}/>
@@ -288,6 +288,7 @@ function DadosContent() {
                       axisLine={false}
                       tickMargin={10}
                       minTickGap={activePeriod === "Mês" ? 15 : 5}
+                      interval={activePeriod === "Mês" ? "preserveStartEnd" : 0}
                     />
                     <Tooltip 
                       content={({ active, payload }) => {
@@ -323,7 +324,7 @@ function DadosContent() {
                 <p className="flex h-full items-center justify-center text-xs text-[#8fa8c4]">Sem dados ainda</p>
               ) : (
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={chartData} margin={{ top: 5, right: 0, left: 0, bottom: 0 }} barSize={32}>
+                  <BarChart data={chartData} margin={{ top: 5, right: 15, left: 15, bottom: 0 }} barSize={32}>
                     <XAxis 
                       dataKey="data" 
                       tickFormatter={(data) => {
@@ -339,6 +340,7 @@ function DadosContent() {
                       axisLine={false}
                       tickMargin={10}
                       minTickGap={activePeriod === "Mês" ? 15 : 5}
+                      interval={activePeriod === "Mês" ? "preserveStartEnd" : 0}
                     />
                     <Tooltip 
                       content={({ active, payload }) => {

@@ -14,7 +14,7 @@ export default function Home() {
           href="/cadastro" 
           className="w-full rounded-full py-4 font-bold tracking-wide transition-all duration-300 flex items-center justify-center bg-[#04D939] text-[#012340] hover:brightness-110"
         >
-          CRIAR MINHA CONTA
+          ENTRAR
         </Link>
         
         {/* Botão Secundário (Outline) estilo botão Play */}
